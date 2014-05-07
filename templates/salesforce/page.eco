@@ -1,0 +1,10 @@
+<apex:page sidebar="false" showHeader="<%= @show_header || true %>" controller="threevot.ThreeVotApiController">
+
+  <%- @head %>
+  
+  <div class="_3vot" id="_3vot_<%= @pck.name %>">
+  </div>
+  
+  <script src="//3vot.com/<%= @user_name %>/<%= @pck.name %>/3vot.js"></script>
+  
+</apex:page>
