@@ -11,12 +11,12 @@
     "gitDependencies": "Bower and Github based Libraries that can be required within an app. ie: Angular",
     "depedencies": "NPM Browser Compatible Dependencies that can be required within an app. ie: 3vot-model"
   },
-	"name": "<%= @app.name %>",
+	"name": "<%= @app_name %>",
 	"description": "",
 	"version": "0.0.1",
 	"threevot": {
 	  	"version": "1",
-	  	"displayName" : "<%= @app.name %>",
+	  	"displayName" : "<%= @app_name %>",
     	"size" : "small",
 		"platforms": {
 			"desktop": [ "desktop", "laptop" ],

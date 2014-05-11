@@ -5,7 +5,7 @@ var fs = require("fs");
 var app = require("../code/index.js")
 
 //2: Define the Template to load when Device type is Phone
-var layout = fs.readFileSync("./apps/<%= @app.name %>/templates/layout.html");
+var layout = fs.readFileSync("./apps/<%= @app_name %>/templates/layout.html");
 
 // [ READ ONLY: Loads the Template into the Page in different enviroments such as 3VOT, External Deployment, Salesforce, etc] 
 if(_3vot.el){ _3vot.el.innerHTML = layout; }
