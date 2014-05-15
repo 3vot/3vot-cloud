@@ -124,7 +124,7 @@ function adjust3vot(){
     var templatesPath =  Path.join(Path.dirname(fs.realpathSync(__filename)), '../templates' , "app" , "3vot.eco");
     templatePath = fs.readFileSync( templatesPath, "utf-8");
 
-    var templateRender = eco.render( templatePath , { options: promptOptions });
+    var templateRender = eco.render( templatePath , promptOptions );
     fs.writeFile( Path.join( process.cwd(), "apps", tempVars.app.name, "start", "3vot.js" ), templateRender, function(err){
       deferred.resolve()
     });
