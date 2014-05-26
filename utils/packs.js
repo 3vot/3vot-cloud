@@ -1,21 +1,16 @@
 var Path = require("path")
 var Q = require("q");
 var fs = require("fs")
-var extend = require('util')._extend
-
 
 function requireUncached(module){
   delete require.cache[ require.resolve(module) ]
   return require( module )
 }
 
-function _3vot(options){
+function _3vot(reload){
   var path= Path.join(process.cwd(), "3vot.json");
-  var result;
-  result = requireUncached( path  )
-  
-  if(options) return extend(options, result )
-  return result;
+  if(reload) return requireUncached( path  )
+  return require( path )
 }
 
 function _3vot_save(fileContents){
@@ -30,12 +25,12 @@ function _3vot_save(fileContents){
    return deferred.promise;  
 }
 
-function _package(options){
+function _package(){
   var path = Path.join( process.cwd(), "apps", promptOptions.app_name, "package.json" );
-  var result =  requireUncached( path );
-  if(options) return extend(options, result )
-  return result;
+  return requireUncached( path );
 }
+
+
 
 module.exports = {
   requireUncached: requireUncached,

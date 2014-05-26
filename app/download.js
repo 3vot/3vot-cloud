@@ -13,6 +13,8 @@ var prompt = require("prompt")
 var eco = require("eco")
 var AwsCredentials = require("../aws/credentials");
 
+var rimraf = require("rimraf")
+
 var Install = require("../utils/install")
 
 var Log = require("../utils/log")
@@ -27,6 +29,7 @@ var promptOptions= {
   app_name: null,
   app_user_name: null,
   app_version: null,
+  app_new_name: null,
   paths: null
 }
 
@@ -36,7 +39,7 @@ var tempVars= {
 
 function execute( options ){
   Log.info("Downloading " +  options.app_name + " from the 3VOT Marketplace")
-  
+  if(!options.app_new_name) options.app_new_name = options.app_name
   var deferred = Q.defer();
   
   if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com", demoBucket: "demo.3vot.com"}
@@ -45,10 +48,11 @@ function execute( options ){
   getApp()
   .then( function(){ return AwsCredentials.requestKeysFromProfile(promptOptions.user_name) })
   .then( downloadApp )
+  .then( function(){ if(promptOptions.app_name != promptOptions.app_new_name) return renameFolder(); else return false;  })
   .then( adjustPackage )
-  .then( adjust3vot )
+ // .then( adjust3vot )
   .then( installDependencies )
-  .then( function(){ return AppBuild( promptOptions.app_name, "localhost", true ) })
+  .then( function(){ return AppBuild( promptOptions.app_new_name, "localhost", true ) })
   .then( function(){ deferred.resolve(tempVars.app) })
   .fail( function(err){ return deferred.reject(err); })
 
@@ -75,7 +79,17 @@ function getApp(){
   return deferred.promise;
 }
 
-  
+function clearTMPFolder(){
+  var deferred = Q.deferred;
+  var path = Path.join( process.cwd(), 'tmp' );
+  rimraf(path, function(err){
+    fs.mkdirSync(path);
+    return deferred.resolve();
+  })
+
+  return deferred.promise;
+}
+
 function downloadApp(){
   Log.debug("Downloading Source Code" , "actions/app_download", 80)
 
@@ -85,58 +99,83 @@ function downloadApp(){
   var key = promptOptions.app_user_name + '/' + tempVars.app.name  + "_" +  promptOptions.app_version + '.3vot';
   
   var params = {Bucket: promptOptions.paths.sourceBucket , Key: key };
-  s3.getObject(params).createReadStream().pipe(zlib.createGunzip() ).pipe( tar.Extract( Path.join( process.cwd(), 'apps' ) ) )
+  s3.getObject(params).createReadStream().pipe(zlib.createGunzip() ).pipe( tar.Extract( Path.join( process.cwd(), 'tmp' ) ) )
   .on("end", function(){ deferred.resolve(); })
   .on("error", function( error ){ console.log("Error with source key: " + key); deferred.reject(error) });
   
   return deferred.promise;
 }
 
+function renameFolder(){
+  var deferred = Q.defer();
+  var oldPath = Path.join( process.cwd(), 'tmp', promptOptions.app_name );
+  var newPath = Path.join( process.cwd(), 'apps', promptOptions.app_new_name );
+
+    /**
+   * Look ma, it's cp -R.
+   * @param {string} src The path to the thing to copy.
+   * @param {string} dest The path to the new copy.
+   */
+  var copyRecursiveSync = function(src, dest) {
+    var exists = fs.existsSync(src);
+    var stats = exists && fs.statSync(src);
+    var isDirectory = exists && stats.isDirectory();
+    if (exists && isDirectory) {
+      fs.mkdirSync(dest);
+      fs.readdirSync(src).forEach(function(childItemName) {
+        copyRecursiveSync(Path.join(src, childItemName),
+                          Path.join(dest, childItemName));
+      });
+    } else {
+      fs.linkSync(src, dest);
+    }
+  };
+
+  try{
+    copyRecursiveSync(oldPath, newPath);
+  }catch(err){
+    process.nextTick(function(){ return deferred.reject(err); });
+  }
+  
+  process.nextTick(function(){ return deferred.resolve(); });
+
+  return deferred.promise;
+}
+
 function adjustPackage(){
-  Log.debug("Adjusting the package.json for your Profile", "actions/app_download", 98)
+  Log.debug("Adjusting the package.json for your Profile", "actions/app_download", 98);
 
   var deferred = Q.defer();
-  var pck = require( Path.join( process.cwd(), "apps", tempVars.app.name, "package.json" )  );
-  var vot = require( Path.join( process.cwd(), "3vot.json" )  )
+  var pck = require( Path.join( process.cwd(), "apps", promptOptions.app_new_name, "package.json" )  );
+  var vot = require( Path.join( process.cwd(), "3vot.json" )  );
+
+  pck.name = promptOptions.app_new_name;
+  pck.threevot.displayName = promptOptions.app_new_name;
 
   //if package is our org
   if(promptOptions.user_name == vot.user_name){
-    pck.version = "0.0." + tempVars.app.version
+    pck.version = "0.0." + tempVars.app.version;
     pck.threevot.version = "" + tempVars.app.version;
+    pck.threevot.user_name = vot.user_name;
   }
   else{
-    pck.version = "0.0.1"
+    pck.version = "0.0.1";
     pck.threevot.version = "1";
+    pck.threevot.user_name = vot.user_name;
   }
 
-  fs.writeFile( Path.join( process.cwd(), "apps", tempVars.app.name, "package.json" ), JSON.stringify(pck,null,'\t') , function(err){
+  fs.writeFile( Path.join( process.cwd(), "apps", promptOptions.app_new_name, "package.json" ), JSON.stringify(pck,null,'\t') , function(err){
     if(err) return deferred.reject(err);
-    deferred.resolve()
+    deferred.resolve();
   });
 
   return deferred.promise;
+
 }
-
-function adjust3vot(){
-  var deferred = Q.defer();
-  
-  try{
-    var templatesPath =  Path.join(Path.dirname(fs.realpathSync(__filename)), '../templates' , "app" , "3vot.eco");
-    templatePath = fs.readFileSync( templatesPath, "utf-8");
-
-    var templateRender = eco.render( templatePath , promptOptions );
-    fs.writeFile( Path.join( process.cwd(), "apps", tempVars.app.name, "start", "3vot.js" ), templateRender, function(err){
-      deferred.resolve()
-    });
-  }catch(e){ process.nextTick(function(){ deferred.resolve() }) }
-
-  return deferred.promise;
-}
-
 
 function installDependencies(){
-  var destinationDir = Path.join( "apps", tempVars.app.name, "node_modules" );
-  return Install(tempVars.app.name, destinationDir) 
+  var destinationDir = Path.join( "apps", promptOptions.app_new_name, "node_modules" );
+  return Install(promptOptions.app_new_name, destinationDir) 
 }
 
 module.exports = execute;

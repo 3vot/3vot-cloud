@@ -5,12 +5,9 @@
     
   </head>
 
-  <body class="_3vot">
+  <body id="_3vot_<%= @app_name %>" class="_3vot">
 
-    <div id="_3vot_<%= @pck.name %>">
-    </div>
-    
-    <script src="//3vot.com/<%= @user_name %>/<%= @pck.name %>/3vot.js"></script>
+  <script src="//3vot.com/<%= @user_name %>/<%= @app_name %>/3vot.js"></script>
 
  </body>
  
