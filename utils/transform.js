@@ -29,7 +29,7 @@ function production( fileContents, user_name, app_name, app_version ){
   
   //transform path to demo with version number
   fileContents = _3vot.utils.replaceAll( fileContents, 
-    '_3vot.path= _3vot.domain+"/"+_3vot.user_name+"/"+package.name;',
+    '_3vot.path= _3vot.domain+"/"+_3vot.user_name+"/"+package.name',
     '_3vot.path= _3vot.domain+"/"+_3vot.user_name+"/"+package.name+"_'+app_version+'"'
   );
   
