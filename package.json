@@ -1,6 +1,6 @@
 {
   "name": "3vot-cloud",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Cloud Components for 3VOT Command Line Tools",
   "main": "index.js",
   "scripts": {
@@ -37,12 +37,12 @@
     "mixpanel": "0.0.19",
     "async": "^0.8.0"
   },
-  "devDependencies":{
+  "devDependencies": {
     "grunt-cli": "~0.1.13",
     "grunt": "~0.4.4",
     "grunt-s3": "~0.2.0-alpha.3"
   },
-  "testDependencies":{
+  "testDependencies": {
     "mocha": "~1.17.0",
     "should": "~3.0.1",
     "nock": "~0.27.2",
