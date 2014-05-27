@@ -48,7 +48,7 @@ function execute( options ){
   getApp()
   .then( function(){ return AwsCredentials.requestKeysFromProfile(promptOptions.user_name) })
   .then( downloadApp )
-  .then( function(){ if(promptOptions.app_name != promptOptions.app_new_name) return renameFolder(); else return false;  })
+  .then( copyFolder )
   .then( adjustPackage )
  // .then( adjust3vot )
   .then( installDependencies )
@@ -106,7 +106,7 @@ function downloadApp(){
   return deferred.promise;
 }
 
-function renameFolder(){
+function copyFolder(){
   var deferred = Q.defer();
   var oldPath = Path.join( process.cwd(), 'tmp', promptOptions.app_name );
   var newPath = Path.join( process.cwd(), 'apps', promptOptions.app_new_name );

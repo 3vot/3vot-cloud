@@ -1,6 +1,6 @@
 {
   "name": "3vot-cloud",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Cloud Components for 3VOT Command Line Tools",
   "main": "index.js",
   "scripts": {
@@ -47,7 +47,7 @@
     "should": "~3.0.1",
     "nock": "~0.27.2",
     "sinon": "~1.9.0"
-  }
-  "author": "",
-  "license": "BSD-2-Clause"
+  },
+  "author": "Roberto Rodriguez",
+  "license": "MIT"
 }
