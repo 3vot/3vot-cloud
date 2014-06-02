@@ -60,7 +60,7 @@ function _build3VOTJS(){
   var filename = "3vot.js"
   
   saveFile(options.dist_path, filename, 'require("3vot")( require("../package") )' ) 
-  .then( function(){ return _bundleEntry(filename, options.dist_path); } )
+  .then( function(){ return _bundleEntry(filename, options.dist_path, "uglifyify"); } )
   .then( deferred.resolve )
   .fail( deferred.reject );
 
@@ -121,7 +121,7 @@ function _createBundlesPromises(){
   return bundlePromises;
 }
 
-function _bundleEntry(entryName, path){
+function _bundleEntry(entryName, path, avoidTransform){
   var deferred = Q.defer();
   var _this = this;
 
@@ -133,8 +133,8 @@ function _bundleEntry(entryName, path){
 
   _ref = options.package.threevot.transforms;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    transform = _ref[_i];      
-    b.transform(transform);
+    transform = _ref[_i];   
+    if(transform !== avoidTransform) b.transform(transform);
   }
 
   for (key in options.package.threevot.external) {
