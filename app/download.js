@@ -48,7 +48,7 @@ function execute( options ){
   getApp()
   .then( function(){ return AwsCredentials.requestKeysFromProfile(promptOptions.user_name) })
   .then( downloadApp )
-  .then( copyFolder )
+ // .then( copyFolder )
   .then( adjustPackage )
  // .then( adjust3vot )
   .then( installDependencies )
@@ -79,17 +79,6 @@ function getApp(){
   return deferred.promise;
 }
 
-function clearTMPFolder(){
-  var deferred = Q.deferred;
-  var path = Path.join( process.cwd(), 'tmp' );
-  rimraf(path, function(err){
-    fs.mkdirSync(path);
-    return deferred.resolve();
-  })
-
-  return deferred.promise;
-}
-
 function downloadApp(){
   Log.debug("Downloading Source Code" , "actions/app_download", 80)
 
@@ -99,46 +88,10 @@ function downloadApp(){
   var key = promptOptions.app_user_name + '/' + tempVars.app.name  + "_" +  promptOptions.app_version + '.3vot';
   
   var params = {Bucket: promptOptions.paths.sourceBucket , Key: key };
-  s3.getObject(params).createReadStream().pipe(zlib.createGunzip() ).pipe( tar.Extract( Path.join( process.cwd(), 'tmp' ) ) )
+  s3.getObject(params).createReadStream().pipe(zlib.createGunzip() ).pipe( tar.Extract( Path.join( process.cwd(), 'apps' ) ) )
   .on("end", function(){ deferred.resolve(); })
   .on("error", function( error ){ console.log("Error with source key: " + key); deferred.reject(error) });
   
-  return deferred.promise;
-}
-
-function copyFolder(){
-  var deferred = Q.defer();
-  var oldPath = Path.join( process.cwd(), 'tmp', promptOptions.app_name );
-  var newPath = Path.join( process.cwd(), 'apps', promptOptions.app_new_name );
-
-    /**
-   * Look ma, it's cp -R.
-   * @param {string} src The path to the thing to copy.
-   * @param {string} dest The path to the new copy.
-   */
-  var copyRecursiveSync = function(src, dest) {
-    var exists = fs.existsSync(src);
-    var stats = exists && fs.statSync(src);
-    var isDirectory = exists && stats.isDirectory();
-    if (exists && isDirectory) {
-      fs.mkdirSync(dest);
-      fs.readdirSync(src).forEach(function(childItemName) {
-        copyRecursiveSync(Path.join(src, childItemName),
-                          Path.join(dest, childItemName));
-      });
-    } else {
-      fs.linkSync(src, dest);
-    }
-  };
-
-  try{
-    copyRecursiveSync(oldPath, newPath);
-  }catch(err){
-    process.nextTick(function(){ return deferred.reject(err); });
-  }
-  
-  process.nextTick(function(){ return deferred.resolve(); });
-
   return deferred.promise;
 }
 
