@@ -47,8 +47,9 @@ function execute( options ){
 
   getApp()
   .then( function(){ return AwsCredentials.requestKeysFromProfile(promptOptions.user_name) })
+  .then( clearTMPFolder )  
   .then( downloadApp )
- // .then( copyFolder )
+  .then( copyFolder )
   .then( adjustPackage )
  // .then( adjust3vot )
   .then( installDependencies )
@@ -79,18 +80,56 @@ function getApp(){
   return deferred.promise;
 }
 
+function clearTMPFolder(){
+  var deferred = Q.defer();
+  var path = Path.join( process.cwd(), 'tmp' );
+  rimraf(path, function(err){
+    fs.mkdirSync(path);
+    return deferred.resolve();
+  })
+
+  return deferred.promise;
+}
+
 function downloadApp(){
   Log.debug("Downloading Source Code" , "actions/app_download", 80)
 
   var deferred = Q.defer();
   var s3 = new Aws.S3();
 
+  var writeStream = fs.createWriteStream( Path.join( process.cwd(), 'tmp', promptOptions.app_name + ".tar.gz"  ) , { flags : 'w' } );
+
   var key = promptOptions.app_user_name + '/' + tempVars.app.name  + "_" +  promptOptions.app_version + '.3vot';
   
   var params = {Bucket: promptOptions.paths.sourceBucket , Key: key };
-  s3.getObject(params).createReadStream().pipe(zlib.createGunzip() ).pipe( tar.Extract( Path.join( process.cwd(), 'apps' ) ) )
-  .on("end", function(){ deferred.resolve(); })
+  
+  
+  //s3.getObject(params).createReadStream().pipe( zlib.createGunzip() ).pipe( tar.Extract( Path.join( process.cwd(), 'apps' ) ) )
+  
+  s3.getObject(params).createReadStream().pipe( writeStream )
+  .on("close", function(){ deferred.resolve(); })
   .on("error", function( error ){ console.log("Error with source key: " + key); deferred.reject(error) });
+  
+  return deferred.promise;
+}
+
+function copyFolder(){
+  var deferred = Q.defer();
+  var oldPath = Path.join( process.cwd(), 'tmp', promptOptions.app_name + ".tar.gz" );
+  var newPath = Path.join( process.cwd(), 'apps', promptOptions.app_new_name );
+
+  fs.stat(newPath, function(err, stats){ 
+    if(stats) return deferred.reject("App already exists, rename it before download")
+
+    var read = require('fs').createReadStream
+    var unpack = require('tar-pack').unpack
+    read( oldPath )
+    .pipe(unpack( newPath , function (err) {
+      if (err) return deferred.reject(err)
+      deferred.resolve()
+    }))
+
+  });
   
   return deferred.promise;
 }

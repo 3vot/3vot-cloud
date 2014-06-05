@@ -110,7 +110,9 @@ function buildPackage(){
     { path: 'apps/' + promptOptions.app_name, 
       type: "Directory", 
       filter: function () {
-        return !this.basename.match(/^\.git/) && !this.basename.match(/^node_modules$/)
+        return !this.basename.match(/^\./) &&
+               !this.basename.match(/^node_modules$/) &&
+               !this.basename.match(/^\.git/) 
       }
    });
 
