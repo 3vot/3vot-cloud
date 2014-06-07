@@ -134,16 +134,18 @@ function uploadSourceCode(){
   var deferred = Q.defer();  
   Log.debug("Uploading Package to 3VOT App Store", "actions/app_upload", 139)
 
-  var file = fs.readFileSync( Path.join( process.cwd(), 'tmp', promptOptions.app_name + '.tar.gz'));
+  var fileObject = {
+    path: Path.join( process.cwd(), 'tmp', promptOptions.app_name + '.tar.gz'),
+    key: promptOptions.user_name + '/' + promptOptions.app_name  + "_" +  tempVars.app_version  + '.3vot'
+  }
 
-  var key = promptOptions.user_name + '/' + promptOptions.app_name  + "_" +  tempVars.app_version  + '.3vot';
-
-  var s3 = new Aws.S3();
-  s3.putObject( { Body: file , Key: key, Bucket: promptOptions.paths.sourceBucket }, function(s3Error, data) {
-    if (s3Error) return deferred.reject(s3Error);
+  AwsHelpers.uploadFile( promptOptions.paths.sourceBucket, fileObject )
+  .then( function(s3Error, data) {
     Log.debug("Package Uploaded Correctly to 3VOT App Store", "actions/app_upload", 150)
     deferred.resolve(data)
-  });
+  })
+  .fail( deferred.reject )
+
   return deferred.promise;
 }
 
