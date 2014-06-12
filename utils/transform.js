@@ -2,6 +2,8 @@ var _3vot = require("3vot")
 var Path = require("path")
 var Log = require("./log")
 
+_3vot.host = "3vot.com"
+
 
 function development( fileContents, user_name, app_name, domain ){
   var devDomain = domain || "localhost:3000"
