@@ -1,6 +1,6 @@
 {
   "name": "3vot-cloud",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Cloud Components for 3VOT Command Line Tools",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,6 @@
     "semver": "~2.2.1",
     "fstream": "~0.1.25",
     "tar": "~0.1.19",
-    "zlib": "~1.0.5",
     "parse": "~1.2.13",
     "mime": "~1.2.11",
     "less": "~1.6.1",
