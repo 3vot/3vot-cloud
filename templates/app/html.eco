@@ -7,7 +7,7 @@
 
   <body id="_3vot_<%= @app_name %>" class="_3vot">
 
-  <script src="//3vot.com/<%= @user_name %>/<%= @app_name %>/3vot.js"></script>
+  <script src="3vot.js"></script>
 
  </body>
  

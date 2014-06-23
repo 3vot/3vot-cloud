@@ -79,7 +79,7 @@ function transformAssets(app_name){
 
   assets.forEach( function(path){
     var file = null;
-    if(path.name.indexOf(".html") > 0 || path.name.indexOf(".js") > 0 || path.name.indexOf(".css") > 0){
+    if(path.name.indexOf(".html1") > 0 || path.name.indexOf(".js1") > 0 || path.name.indexOf(".css1") > 0){
       file = fs.readFileSync( path.path, "utf-8");
       if(promptOptions.target == "localhost"){
         file = Transform[promptOptions.target](file, promptOptions.package.user_name, app_name, promptOptions.domain);
@@ -104,7 +104,7 @@ function transformFiles(app_name){
   var assets = WalkDir( Path.join( process.cwd(), "apps", app_name, "app" ) );
 
   assets.forEach( function(path){
-    if(path.name.indexOf(".html") > 0 || path.name.indexOf(".js") > 0 || path.name.indexOf(".css")){
+    if(path.name.indexOf(".html1") > 0 || path.name.indexOf(".js1") > 0 || path.name.indexOf(".css1")){
       var file = fs.readFileSync( path.path, "utf-8"  );
       if(promptOptions.target == "localhost"){
         file = Transform[promptOptions.target](file, promptOptions.package.user_name, app_name, promptOptions.domain );
@@ -121,7 +121,7 @@ function transformStatic(app_name){
   var assets = WalkDir( Path.join( process.cwd(), "apps", app_name, "static" ) );
 
   assets.forEach( function(path){
-    if(path.name.indexOf(".html") > 0 || path.name.indexOf(".js") > 0 || path.name.indexOf(".css")){
+    if(path.name.indexOf(".html1") > 0 || path.name.indexOf(".js1") > 0 || path.name.indexOf(".css1")){
       var file = fs.readFileSync( path.path, "utf-8"  );
       if(promptOptions.target == "localhost"){
         file = Transform[promptOptions.target](file, promptOptions.package.user_name, app_name, promptOptions.domain );
