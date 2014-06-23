@@ -29,6 +29,7 @@ var promptOptions = {
   app_name: null,
   size: null,
   paths: null,
+  uploadAppFiles: null
 }
 
 var tempVars = {
@@ -49,7 +50,7 @@ function execute(options){
     .then( function(){ return AppBuild( promptOptions.app_name, "demo", true ) })
     .then( buildPackage )
     .then( uploadSourceCode )
-    .then( uploadAppFiles )
+    .then( promptOptions.uploadAppFiles || uploadAppFiles )
     .then( uploadDependenciesFiles )
     .then( createApp )
     .then( function(){ 

@@ -6,10 +6,10 @@ var credentials = {}
 
 module.exports = credentials;
 
-credentials.requestKeysFromProfile = function( user_name ){
+credentials.requestKeysFromProfile = function( user_name, public_dev_key ){
   var deferred = Q.defer();
   request.get("http://backend.3vot.com/v1/tokens/developerToken")
-  .query( { username: user_name } )
+  .query( { username: user_name, key: public_dev_key } )
   .on("error", function(err){ deferred.reject(err) })
   .end(function(res){
     var config = credentials._config( res.body )
