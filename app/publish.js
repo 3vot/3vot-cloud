@@ -2,7 +2,6 @@ var Aws = require("aws-sdk");
 var Path = require("path")
 var fs = require("fs")
 var Q = require("q");
-var Transform = require("../utils/transform")
 var AwsCredentials = require("../aws/credentials");
 var AwsHelpers = require("../aws/helpers");
 var AppBuild = require("./build")
