@@ -48,7 +48,7 @@ function execute(options){
     if( !options.uploadApp ) options.uploadApp = true
 
     promptOptions= options;
-    promptOptions.key = promptOptions.keys.join["/"]
+    promptOptions.key = promptOptions.keys.join("/")
 
     getAppVersion()
     .then( adjustPackage )
