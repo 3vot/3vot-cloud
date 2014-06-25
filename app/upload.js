@@ -42,7 +42,7 @@ var tempVars = {
 function execute(options){
     var deferred = Q.defer();
    // if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com" }
-    if( !options.keys ) options.keys = [promptOptions.user_name, promptOptions.app_name]
+    if( !options.keys ) options.keys = [options.user_name, options.app_name]
     if( !options.production ) options.production = false
     if( !options.uploadSource ) options.uploadSource = true
     if( !options.uploadApp ) options.uploadApp = true

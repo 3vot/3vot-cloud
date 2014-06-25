@@ -30,7 +30,7 @@ Helpers.copyKey = function(destinationBucket, sourceKey, destinationKey){
   var deferred = Q.defer();
 
   var s3 = new AWS.S3();
-  s3.copyObject({ Bucket: destinationBucket, CopySource: encodeURIComponent(sourceKey), Key: destinationKey }, function(err, data){
+  s3.copyObject({ ACL: "public-read",  Bucket: destinationBucket, CopySource: encodeURIComponent(sourceKey), Key: destinationKey }, function(err, data){
     if(err){ return deferred.reject(err); }
     deferred.resolve(data);
   });
