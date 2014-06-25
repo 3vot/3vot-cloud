@@ -22,7 +22,7 @@ var options = {
 
 module.exports = {
   buildApp: buildApp,
-  buildDependency: buildDependency,
+//  buildDependency: buildDependency,
   buildHtml: buildHtml,
   saveFile: saveFile
 }
@@ -31,7 +31,6 @@ module.exports = {
 function buildApp(app_name, user_name){
   var deferred = Q.defer();
   
-
   options.app_name     =  app_name;
   options.user_name    =  user_name;
   options.app_path     =  Path.join( process.cwd(), "apps", options.app_name);
@@ -43,7 +42,7 @@ function buildApp(app_name, user_name){
   options.entry_path   =  Path.join( options.app_path,   "code");
   options.view_path    =  Path.join( options.entry_path, "views");
   
-  options.dependency_path = Path.join( process.cwd(), "apps", "dependencies" );
+  //options.dependency_path = Path.join( process.cwd(), "apps", "dependencies" );
   options.package = require( options.package_path ) 
 
   Q.all( _createBundlesPromises() )
@@ -148,34 +147,6 @@ function _bundleEntry(entryName, path, avoidTransform){
       saveFile( options.dist_path, entryName , src )
       .then( function(){ deferred.resolve( src ) }  )
       .fail( function(saveError){ deferred.reject(saveError)  }  )
-    }
-  );
-  return deferred.promise;
-}
-
-
-//TO BE OBSOLETE
-
-  //Builds the Dependencies identified in threevot.external of package.json
-function buildDependency(){
-  var deferred = Q.defer();
-  var b = Browserify()
- 
-  var _ref = options.package.threevot.external;
-  var _this = this;
-
-  if(Object.keys(_ref).length == 0) return true
-
-  for (key in _ref) {
-    var dep = _ref[key];
-    b.require( dep, { expose: dep, basedir: options.dependency_path } );
-  }
-  
-  b.bundle( {}, 
-    function(err, src) {
-      if (err) return deferred.reject(err)
-      _this.saveFile( options.dependency_path, _3vot.dependency.getDependencyName( options.package ) + ".js", src )
-      .then( function(){ deferred.resolve( src ) }  )
     }
   );
   return deferred.promise;

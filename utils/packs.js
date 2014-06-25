@@ -10,11 +10,16 @@ function requireUncached(module){
 }
 
 function _3vot(options){
+  if(!options) options = {}
   var path= Path.join(process.cwd(), "3vot.json");
   var result;
   result = requireUncached( path  )
   
-  if(options) return extend(options, result )
+  result = extend(options, result )
+
+  if(!result.paths) result.paths= { "sourceBucket": "source.3vot.com", "productionBucket": "3vot.com" }
+  if(!result.uploadSource) result.uploadSource = true;
+
   return result;
 }
 

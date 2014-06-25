@@ -3,10 +3,8 @@ var fs = require("fs")
 var Q = require("q");
 var eco = require("eco")
 var prompt = require("prompt")
-
 var Profile = require("../models/profile")
 var App = require("../models/app")
-
 var Aws = require("aws-sdk");
 var fstream = require("fstream");
 var tar = require("tar");
@@ -29,7 +27,10 @@ var promptOptions = {
   app_name: null,
   size: null,
   paths: null,
-  uploadAppFiles: null
+  keys: null,
+  key: null,
+  uploadSource: null,
+  uploadApp: null
 }
 
 var tempVars = {
@@ -40,10 +41,15 @@ var tempVars = {
 
 function execute(options){
     var deferred = Q.defer();
+   // if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com" }
+    if( !options.keys ) options.keys = [promptOptions.user_name, promptOptions.app_name]
+    if( !options.production ) options.production = false
+    if( !options.uploadSource ) options.uploadSource = true
+    if( !options.uploadApp ) options.uploadApp = true
 
-    if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com", demoBucket: "demo.3vot.com"}
     promptOptions= options;
-    
+    promptOptions.key = promptOptions.keys.join["/"]
+
     getAppVersion()
     .then( adjustPackage )
     .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user_name) })
@@ -51,7 +57,6 @@ function execute(options){
     .then( buildPackage )
     .then( uploadSourceCode )
     .then( promptOptions.uploadAppFiles || uploadAppFiles )
-    .then( uploadDependenciesFiles )
     .then( createApp )
     .then( function(){ 
       Log.info("App Available at: http://" + promptOptions.paths.productionBucket + "/" + promptOptions.user_name + "/" + promptOptions.app_name +  "_" + tempVars.app_version )
@@ -79,12 +84,9 @@ function getAppVersion(){
       return deferred.reject( error )
     }
   }
-  
   App.fetch( { query: { select: App.querySimpleByNameAndProfileSecurity, values: [ promptOptions.user_name, promptOptions.app_name ] }  }, callbacks )
-  
   return deferred.promise;
 }
-
 
 function adjustPackage(){
   var deferred = Q.defer();
@@ -132,12 +134,13 @@ function buildPackage(){
 }
 
 function uploadSourceCode(){
+  if (!promptOptions.uploadSource ) return true;
   var deferred = Q.defer();  
   Log.debug("Uploading Package to 3VOT App Store", "actions/app_upload", 139)
 
   var fileObject = {
     path: Path.join( process.cwd(), 'tmp', promptOptions.app_name + '.tar.gz'),
-    key: promptOptions.user_name + '/' + promptOptions.app_name  + "_" +  tempVars.app_version  + '.3vot'
+    key: promptOptions.key  + "_" +  tempVars.app_version  + '.3vot'
   }
 
   AwsHelpers.uploadFile( promptOptions.paths.sourceBucket, fileObject )
@@ -151,6 +154,7 @@ function uploadSourceCode(){
 }
 
 function uploadAppFiles(){
+  if (!promptOptions.uploadApp) return true;
   var deferred = Q.defer();  
   Log.debug("Uploading App", "actions/app_upload", 157)
   
@@ -158,7 +162,7 @@ function uploadAppFiles(){
   var apps = WalkDir( Path.join( process.cwd(), "apps", promptOptions.app_name, "app" ) );
 
   apps.forEach( function(path){
-    path.key = promptOptions.user_name + "/" +  promptOptions.app_name  +  "_" + tempVars.app_version + "/" + path.name
+    path.key = promptOptions.key + "/" + tempVars.app_version + "/" + path.name
     uploadPromises.push( function(callback) { 
       AwsHelpers.uploadFile( promptOptions.paths.productionBucket, path )
       .then( function(){ callback(null,true) } ) 
@@ -172,29 +176,6 @@ function uploadAppFiles(){
     return deferred.resolve()
   });
 
-  return deferred.promise;
-}
-
-function uploadDependenciesFiles(){
-  Log.debug("Uploading Dependencies", "actions/app_upload", 195)
-  
-  var deferred = Q.defer();
-  var uploadPromises = []
- 
-  var deps = WalkDir( Path.join( process.cwd(), "apps", "dependencies" ) );
- 
-  deps.forEach( function(path){
-    path.key = promptOptions.user_name + "/dependencies/" + path.name
-    uploadPromises.push( AwsHelpers.uploadFile( promptOptions.paths.productionBucket, path ) );
-  });
-  
-  uploadPromises.push( function(){ return deferred.resolve()  } )
-
-  var result = Q( function(){ return true } );
-  uploadPromises.forEach(function (f) {
-    result.then(f).fail( function(error){ return deferred.reject( error ) } );
-  });
-  
   return deferred.promise;
 }
 

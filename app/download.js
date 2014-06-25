@@ -30,7 +30,9 @@ var promptOptions= {
   app_user_name: null,
   app_version: null,
   app_new_name: null,
-  paths: null
+  paths: null,
+  keys: null,
+  key: null
 }
 
 var tempVars= {
@@ -43,7 +45,9 @@ function execute( options ){
   var deferred = Q.defer();
   
   if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com", demoBucket: "demo.3vot.com"}
+  if( !options.keys ) options.keys = [promptOptions.user_name, promptOptions.app_name]
   promptOptions = options;
+  promptOptions.key = promptOptions.keys.join["/"]
 
   getApp()
   .then( function(){ return AwsCredentials.requestKeysFromProfile(promptOptions.user_name) })
@@ -99,7 +103,7 @@ function downloadApp(){
 
   var writeStream = fs.createWriteStream( Path.join( process.cwd(), 'tmp', promptOptions.app_name + ".tar.gz"  ) , { flags : 'w' } );
 
-  var key = promptOptions.app_user_name + '/' + tempVars.app.name  + "_" +  promptOptions.app_version + '.3vot';
+  var key = promptOptions.key + "_" +  promptOptions.app_version + '.3vot';
   
   var params = {Bucket: promptOptions.paths.sourceBucket , Key: key };
   
