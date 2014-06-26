@@ -1,6 +1,7 @@
 var Q = require("q");
 var colors = require('colors');
 var level = "DEBUG2";
+var Stat = require("./stats")
 
 //user_name is set manually or by ./package_loader
 var user_name = "";
@@ -114,15 +115,8 @@ function translateError(error){
 }
 
 function recordError(errorObject,callback){
-  errorObject.distinct_id = getUsername();
-  
-  Stat.mixpanel.track("error", errorObject, function(err){
-    if(err){
-      info("Not able to register error on 3VOT Server");
-      debug(err)
-    }
-    if(callback) callback()
-  })
+  Stat.track("error", errorObject)
+  callback()
 }
 
 module.exports = {
@@ -137,4 +131,3 @@ module.exports = {
   recordError: recordError
 }
 
-var Stat = require("./stats")

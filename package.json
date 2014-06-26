@@ -34,7 +34,8 @@
     "mkpath": "~0.1.0",
     "mixpanel": "0.0.19",
     "async": "^0.8.0",
-    "tar-pack": "~2.0.0"
+    "tar-pack": "~2.0.0",
+    "keen.io": "~0.1.2"
   },
   "devDependencies": {
     "grunt-cli": "~0.1.13",
