@@ -44,8 +44,8 @@ function execute(options){
    // if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com" }
     if( !options.keys ) options.keys = [options.user_name, options.app_name]
     if( !options.production ) options.production = false
-    if( !options.uploadSource ) options.uploadSource = true
-    if( !options.uploadApp ) options.uploadApp = true
+    if( options.uploadSource == null ) options.uploadSource = true
+    if( options.uploadApp == null ) options.uploadApp = true
 
     promptOptions= options;
     promptOptions.key = promptOptions.keys.join("/")
