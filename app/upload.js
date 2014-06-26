@@ -162,7 +162,7 @@ function uploadAppFiles(){
   var apps = WalkDir( Path.join( process.cwd(), "apps", promptOptions.app_name, "app" ) );
 
   apps.forEach( function(path){
-    path.key = promptOptions.key + "/" + tempVars.app_version + "/" + path.name
+    path.key = promptOptions.key + "_" + tempVars.app_version + "/" + path.name
     uploadPromises.push( function(callback) { 
       AwsHelpers.uploadFile( promptOptions.paths.productionBucket, path )
       .then( function(){ callback(null,true) } ) 
