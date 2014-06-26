@@ -1,0 +1,214 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/roberto/.nvm/v0.10.21/bin/node',
+1 verbose cli   '/Users/roberto/.nvm/v0.10.21/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@1.3.11
+3 info using node@v0.10.21
+4 verbose publish [ '.' ]
+5 verbose cache add [ '.', null ]
+6 verbose cache add name=undefined spec="." args=[".",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: '.',
+7 verbose parsed url   path: '.',
+7 verbose parsed url   href: '.' }
+8 silly lockFile 3a52ce78- .
+9 verbose lock . /Users/roberto/.npm/3a52ce78-.lock
+10 verbose tar pack [ '/var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz',
+10 verbose tar pack   '.' ]
+11 verbose tarball /var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz
+12 verbose folder .
+13 silly lockFile 1f1177db-tar tar://.
+14 verbose lock tar://. /Users/roberto/.npm/1f1177db-tar.lock
+15 silly lockFile 07218380-1963-0-24640082498081028-tmp-tgz tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz
+16 verbose lock tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz /Users/roberto/.npm/07218380-1963-0-24640082498081028-tmp-tgz.lock
+17 silly lockFile 1f1177db-tar tar://.
+18 silly lockFile 1f1177db-tar tar://.
+19 silly lockFile 07218380-1963-0-24640082498081028-tmp-tgz tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz
+20 silly lockFile 07218380-1963-0-24640082498081028-tmp-tgz tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz
+21 verbose tar unpack /var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz
+22 silly lockFile dbabfebf-1963-0-24640082498081028-package tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package
+23 verbose lock tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package /Users/roberto/.npm/dbabfebf-1963-0-24640082498081028-package.lock
+24 silly lockFile 07218380-1963-0-24640082498081028-tmp-tgz tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz
+25 verbose lock tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz /Users/roberto/.npm/07218380-1963-0-24640082498081028-tmp-tgz.lock
+26 silly gunzTarPerm modes [ '755', '644' ]
+27 silly gunzTarPerm extractEntry package.json
+28 silly gunzTarPerm extractEntry .npmignore
+29 silly gunzTarPerm extractEntry Gruntfile.js
+30 silly gunzTarPerm extractEntry app/build.js
+31 silly gunzTarPerm extractEntry app/create.js
+32 silly gunzTarPerm extractEntry app/download.js
+33 silly gunzTarPerm extractEntry app/install.js
+34 silly gunzTarPerm extractEntry app/publish.js
+35 silly gunzTarPerm extractEntry app/upload.js
+36 silly gunzTarPerm extractEntry aws/credentials.js
+37 silly gunzTarPerm extractEntry aws/helpers.js
+38 silly gunzTarPerm extractEntry utils/builder.js
+39 silly gunzTarPerm extractEntry utils/install.js
+40 silly gunzTarPerm extractEntry utils/log.js
+41 silly gunzTarPerm extractEntry utils/packs.js
+42 silly gunzTarPerm extractEntry utils/stats.js
+43 silly gunzTarPerm extractEntry utils/validate.js
+44 silly gunzTarPerm extractEntry utils/walk.js
+45 silly gunzTarPerm extractEntry _utils/template.js
+46 silly gunzTarPerm extractEntry _utils/transform.js
+47 silly gunzTarPerm extractEntry templates/package.json
+48 silly gunzTarPerm extractEntry templates/_.gitignore
+49 silly gunzTarPerm extractEntry templates/_3vot.json
+50 silly gunzTarPerm extractEntry templates/app/head.eco
+51 silly gunzTarPerm extractEntry templates/app/html.eco
+52 silly gunzTarPerm extractEntry models/app.js
+53 silly gunzTarPerm extractEntry models/profile.js
+54 silly lockFile dbabfebf-1963-0-24640082498081028-package tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package
+55 silly lockFile dbabfebf-1963-0-24640082498081028-package tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package
+56 silly lockFile 07218380-1963-0-24640082498081028-tmp-tgz tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz
+57 silly lockFile 07218380-1963-0-24640082498081028-tmp-tgz tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/tmp.tgz
+58 verbose tar pack [ '/Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz',
+58 verbose tar pack   '/var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package' ]
+59 verbose tarball /Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz
+60 verbose folder /var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package
+61 silly lockFile dbabfebf-1963-0-24640082498081028-package tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package
+62 verbose lock tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package /Users/roberto/.npm/dbabfebf-1963-0-24640082498081028-package.lock
+63 silly lockFile 35baf29b-pm-3vot-cloud-0-0-24-package-tgz tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz
+64 verbose lock tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz /Users/roberto/.npm/35baf29b-pm-3vot-cloud-0-0-24-package-tgz.lock
+65 silly lockFile dbabfebf-1963-0-24640082498081028-package tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package
+66 silly lockFile dbabfebf-1963-0-24640082498081028-package tar:///var/folders/jh/r3qc2ygs48lg96lpbt769fs00000gn/T/npm-6285--TrultrQ/1403743001963-0.24640082498081028/package
+67 silly lockFile 35baf29b-pm-3vot-cloud-0-0-24-package-tgz tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz
+68 silly lockFile 35baf29b-pm-3vot-cloud-0-0-24-package-tgz tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz
+69 silly lockFile 9a43b8f9-to-npm-3vot-cloud-0-0-24-package /Users/roberto/.npm/3vot-cloud/0.0.24/package
+70 verbose lock /Users/roberto/.npm/3vot-cloud/0.0.24/package /Users/roberto/.npm/9a43b8f9-to-npm-3vot-cloud-0-0-24-package.lock
+71 silly lockFile 9a43b8f9-to-npm-3vot-cloud-0-0-24-package /Users/roberto/.npm/3vot-cloud/0.0.24/package
+72 silly lockFile 9a43b8f9-to-npm-3vot-cloud-0-0-24-package /Users/roberto/.npm/3vot-cloud/0.0.24/package
+73 verbose tar unpack /Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz
+74 silly lockFile 3ecba08b-to-npm-3vot-cloud-0-0-24-package tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package
+75 verbose lock tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package /Users/roberto/.npm/3ecba08b-to-npm-3vot-cloud-0-0-24-package.lock
+76 silly lockFile 35baf29b-pm-3vot-cloud-0-0-24-package-tgz tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz
+77 verbose lock tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz /Users/roberto/.npm/35baf29b-pm-3vot-cloud-0-0-24-package-tgz.lock
+78 silly gunzTarPerm modes [ '755', '644' ]
+79 silly gunzTarPerm extractEntry package.json
+80 silly gunzTarPerm extractEntry .npmignore
+81 silly gunzTarPerm extractEntry Gruntfile.js
+82 silly gunzTarPerm extractEntry _utils/template.js
+83 silly gunzTarPerm extractEntry _utils/transform.js
+84 silly gunzTarPerm extractEntry app/build.js
+85 silly gunzTarPerm extractEntry app/create.js
+86 silly gunzTarPerm extractEntry app/download.js
+87 silly gunzTarPerm extractEntry app/install.js
+88 silly gunzTarPerm extractEntry app/publish.js
+89 silly gunzTarPerm extractEntry app/upload.js
+90 silly gunzTarPerm extractEntry aws/credentials.js
+91 silly gunzTarPerm extractEntry aws/helpers.js
+92 silly gunzTarPerm extractEntry models/app.js
+93 silly gunzTarPerm extractEntry models/profile.js
+94 silly gunzTarPerm extractEntry templates/package.json
+95 silly gunzTarPerm extractEntry templates/_.gitignore
+96 silly gunzTarPerm extractEntry templates/_3vot.json
+97 silly gunzTarPerm extractEntry templates/app/head.eco
+98 silly gunzTarPerm extractEntry templates/app/html.eco
+99 silly gunzTarPerm extractEntry utils/builder.js
+100 silly gunzTarPerm extractEntry utils/install.js
+101 silly gunzTarPerm extractEntry utils/log.js
+102 silly gunzTarPerm extractEntry utils/packs.js
+103 silly gunzTarPerm extractEntry utils/stats.js
+104 silly gunzTarPerm extractEntry utils/validate.js
+105 silly gunzTarPerm extractEntry utils/walk.js
+106 silly lockFile 3ecba08b-to-npm-3vot-cloud-0-0-24-package tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package
+107 silly lockFile 3ecba08b-to-npm-3vot-cloud-0-0-24-package tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package
+108 silly lockFile 35baf29b-pm-3vot-cloud-0-0-24-package-tgz tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz
+109 silly lockFile 35baf29b-pm-3vot-cloud-0-0-24-package-tgz tar:///Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz
+110 verbose chmod /Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz 644
+111 verbose chown /Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz [ 501, 20 ]
+112 silly lockFile 3a52ce78- .
+113 silly lockFile 3a52ce78- .
+114 silly publish { name: '3vot-cloud',
+114 silly publish   version: '0.0.24',
+114 silly publish   description: 'Cloud Components for 3VOT Command Line Tools',
+114 silly publish   main: 'index.js',
+114 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+114 silly publish   dependencies:
+114 silly publish    { colors: '~0.6.2',
+114 silly publish      optimist: '~0.6.0',
+114 silly publish      q: '~1.0.0',
+114 silly publish      browserify: '~3.20.2',
+114 silly publish      bower: '~1.2.8',
+114 silly publish      'aws-sdk': '~2.0.0-rc8',
+114 silly publish      semver: '~2.2.1',
+114 silly publish      fstream: '~0.1.25',
+114 silly publish      tar: '~0.1.19',
+114 silly publish      parse: '~1.2.13',
+114 silly publish      mime: '~1.2.11',
+114 silly publish      less: '~1.6.1',
+114 silly publish      express: '~3.4.8',
+114 silly publish      prompt: '~0.2.12',
+114 silly publish      rimraf: '~2.2.6',
+114 silly publish      eco: '~1.1.0-rc-3',
+114 silly publish      'coffee-script': '~1.7.1',
+114 silly publish      superagent: '~0.16.0',
+114 silly publish      coffeeify: '~0.5.2',
+114 silly publish      brfs: '0.0.8',
+114 silly publish      'browserify-eco': '~0.2.4',
+114 silly publish      '3vot-model': '0.0.20',
+114 silly publish      '3vot-db': '0.0.1',
+114 silly publish      uglifyify: '~2.0.0',
+114 silly publish      mkpath: '~0.1.0',
+114 silly publish      mixpanel: '0.0.19',
+114 silly publish      async: '^0.8.0',
+114 silly publish      'tar-pack': '~2.0.0' },
+114 silly publish   devDependencies:
+114 silly publish    { 'grunt-cli': '~0.1.13',
+114 silly publish      grunt: '~0.4.4',
+114 silly publish      'grunt-s3': '~0.2.0-alpha.3' },
+114 silly publish   testDependencies:
+114 silly publish    { mocha: '~1.17.0',
+114 silly publish      should: '~3.0.1',
+114 silly publish      nock: '~0.27.2',
+114 silly publish      sinon: '~1.9.0' },
+114 silly publish   author: { name: 'Roberto Rodriguez' },
+114 silly publish   license: 'MIT',
+114 silly publish   readme: 'ERROR: No README data found!',
+114 silly publish   _id: '3vot-cloud@0.0.24',
+114 silly publish   dist: { shasum: '6be9f8162a572ed8d00a19222805095075a54582' },
+114 silly publish   _from: '.' }
+115 verbose url raw 3vot-cloud
+116 verbose url resolving [ 'https://registry.npmjs.org/', './3vot-cloud' ]
+117 verbose url resolved https://registry.npmjs.org/3vot-cloud
+118 info trying registry request attempt 1 at 18:36:42
+119 http PUT https://registry.npmjs.org/3vot-cloud
+120 http 201 https://registry.npmjs.org/3vot-cloud
+121 verbose url raw 3vot-cloud
+122 verbose url resolving [ 'https://registry.npmjs.org/', './3vot-cloud' ]
+123 verbose url resolved https://registry.npmjs.org/3vot-cloud
+124 info trying registry request attempt 1 at 18:36:43
+125 http GET https://registry.npmjs.org/3vot-cloud
+126 http 200 https://registry.npmjs.org/3vot-cloud
+127 verbose uploading [ '3vot-cloud/-/3vot-cloud-0.0.24.tgz/-rev/102-5c9617cb7fdb9a44f214eaadfbd09326',
+127 verbose uploading   '/Users/roberto/.npm/3vot-cloud/0.0.24/package.tgz' ]
+128 verbose url raw 3vot-cloud/-/3vot-cloud-0.0.24.tgz/-rev/102-5c9617cb7fdb9a44f214eaadfbd09326
+129 verbose url resolving [ 'https://registry.npmjs.org/',
+129 verbose url resolving   './3vot-cloud/-/3vot-cloud-0.0.24.tgz/-rev/102-5c9617cb7fdb9a44f214eaadfbd09326' ]
+130 verbose url resolved https://registry.npmjs.org/3vot-cloud/-/3vot-cloud-0.0.24.tgz/-rev/102-5c9617cb7fdb9a44f214eaadfbd09326
+131 info trying registry request attempt 1 at 18:36:43
+132 http PUT https://registry.npmjs.org/3vot-cloud/-/3vot-cloud-0.0.24.tgz/-rev/102-5c9617cb7fdb9a44f214eaadfbd09326
+133 http 409 https://registry.npmjs.org/3vot-cloud/-/3vot-cloud-0.0.24.tgz/-rev/102-5c9617cb7fdb9a44f214eaadfbd09326
+134 error publish fail Cannot publish over existing version.
+134 error publish fail Update the 'version' field in package.json and try again.
+134 error publish fail
+134 error publish fail If the previous version was published in error, see:
+134 error publish fail     npm help unpublish
+134 error publish fail
+134 error publish fail To automatically increment version numbers, see:
+134 error publish fail     npm help version
+135 error System Darwin 13.1.0
+136 error command "/Users/roberto/.nvm/v0.10.21/bin/node" "/Users/roberto/.nvm/v0.10.21/bin/npm" "publish"
+137 error cwd /Users/roberto/proyectos/3vot/3vot_cloud
+138 error node -v v0.10.21
+139 error npm -v 1.3.11
+140 error code EPUBLISHCONFLICT
+141 verbose exit [ 1, true ]

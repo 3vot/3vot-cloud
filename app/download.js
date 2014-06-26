@@ -47,7 +47,7 @@ function execute( options ){
   if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com", demoBucket: "demo.3vot.com"}
   if( !options.keys ) options.keys = [options.user_name, options.app_name]
   promptOptions = options;
-  promptOptions.key = promptOptions.keys.join["/"]
+  promptOptions.key = promptOptions.keys.join("/")
 
   getApp()
   .then( function(){ return AwsCredentials.requestKeysFromProfile(promptOptions.user_name) })
