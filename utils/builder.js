@@ -35,13 +35,11 @@ function buildApp(app_name, user_name){
   options.app_path     =  Path.join( process.cwd(), "apps", options.app_name);
   options.temp_path     =  Path.join( process.cwd(), "tmp");
 
-
   options.package_path =  Path.join( options.app_path,   "package.json" );
   options.dist_path    =  Path.join( options.app_path,   "app");
   options.entry_path   =  Path.join( options.app_path,   "code");
   options.view_path    =  Path.join( options.entry_path, "views");
-  
-  //options.dependency_path = Path.join( process.cwd(), "apps", "dependencies" );
+
   options.package = require( options.package_path ) 
 
   Q.all( _createBundlesPromises() )
@@ -74,7 +72,7 @@ function buildHtml(){
   var head = ""
   fs.readFile( headProbablePath, function(err, file){
     if(!err) head = file;
-    var htmlTemplate = fs.readFileSync( Path.join(Path.dirname(fs.realpathSync(__filename)), ".." , 'templates',"app" , "html.eco" ), "utf-8" )
+    var htmlTemplate = fs.readFileSync( process.cwd(), 'templates', "html.eco" ), "utf-8" )
     var html = eco.render(htmlTemplate, { app_name: options.app_name, user_name: options.user_name, head: head } );
 
     fs.writeFile( indexDestPath, html, function(err){
