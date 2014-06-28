@@ -3,7 +3,6 @@ var fs = require("fs");
 var Browserify = require("browserify");
 var Q = require("q");
 var Path = require('path');
-var _3vot = require("3vot");
 var eco = require("eco")
 
 var WalkDir = require("./walk")

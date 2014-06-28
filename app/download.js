@@ -45,7 +45,7 @@ function execute( options ){
   var deferred = Q.defer();
   
   if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com", demoBucket: "demo.3vot.com"}
-  if( !options.keys ) options.keys = [options.user_name, options.app_name]
+  if( !options.keys ) options.keys = [options.app_user_name, options.app_name]
   promptOptions = options;
   promptOptions.key = promptOptions.keys.join("/")
 
@@ -55,7 +55,6 @@ function execute( options ){
   .then( downloadApp )
   .then( copyFolder )
   .then( adjustPackage )
- // .then( adjust3vot )
   .then( installDependencies )
   .then( function(){ return AppBuild( promptOptions.app_new_name, "localhost", true ) })
   .then( function(){ deferred.resolve(tempVars.app) })
@@ -106,9 +105,6 @@ function downloadApp(){
   var key = promptOptions.key + "_" +  promptOptions.app_version + '.3vot';
   
   var params = {Bucket: promptOptions.paths.sourceBucket , Key: key };
-  
-  
-  //s3.getObject(params).createReadStream().pipe( zlib.createGunzip() ).pipe( tar.Extract( Path.join( process.cwd(), 'apps' ) ) )
   
   s3.getObject(params).createReadStream().pipe( writeStream )
   .on("close", function(){ deferred.resolve(); })

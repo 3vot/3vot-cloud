@@ -14,7 +14,6 @@ var mime = require('mime')
 
 var AwsCredentials = require("../aws/credentials");
 var AwsHelpers = require("../aws/helpers");
-var _3vot = require("3vot")
 var AppBuild = require("./build")
 var WalkDir = require("../utils/walk")
 var App = require("../models/app")
