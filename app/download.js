@@ -56,7 +56,17 @@ function execute( options ){
   .then( copyFolder )
   .then( adjustPackage )
   .then( installDependencies )
-  .then( function(){ return AppBuild( promptOptions.app_new_name, "localhost", true ) })
+  .then( function(){ 
+    var deferred = Q.defer();
+    AppBuild( promptOptions.app_new_name, "localhost", true )
+    .then(deferred.resolve)
+    .fail(function(err){
+      Log.debug("Could not build App, probably from previos 3VOT Version, check docs." , "actions/app_download", 98)
+      Log.debug2(err);
+      deferred.resolve();
+    });
+    return deferred.promise;
+  })
   .then( function(){ deferred.resolve(tempVars.app) })
   .fail( function(err){ return deferred.reject(err); })
 
@@ -95,7 +105,7 @@ function clearTMPFolder(){
 }
 
 function downloadApp(){
-  Log.debug("Downloading Source Code" , "actions/app_download", 80)
+  Log.debug("Downloading Source Code" , "actions/app_download", 98)
 
   var deferred = Q.defer();
   var s3 = new Aws.S3();
@@ -106,7 +116,12 @@ function downloadApp(){
   
   var params = {Bucket: promptOptions.paths.sourceBucket , Key: key };
   
-  s3.getObject(params).createReadStream().pipe( writeStream )
+  s3.getObject(params)
+  .on('error', function(error){
+    console.log('s3 download error', error);
+    deferred.reject(error);
+  })
+  .createReadStream().pipe( writeStream )
   .on("close", function(){ deferred.resolve(); })
   .on("error", function( error ){ console.log("Error with source key: " + key); deferred.reject(error) });
   
@@ -114,6 +129,8 @@ function downloadApp(){
 }
 
 function copyFolder(){
+  Log.debug("Copying Folder" , "actions/app_download", 117)
+
   var deferred = Q.defer();
   var oldPath = Path.join( process.cwd(), 'tmp', promptOptions.app_name + ".tar.gz" );
   var newPath = Path.join( process.cwd(), 'apps', promptOptions.app_new_name );

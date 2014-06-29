@@ -65,7 +65,7 @@ function installNPM(){
       npm    = spawn(npmcommand, ['install', '.']);
 
   npm.stdout.on('data', function (data) {
-    Log.debug(data, "utils/install", 66);
+    //Log.debug(data, "utils/install", 66);
   });
 
   npm.on('close', function (code) {
