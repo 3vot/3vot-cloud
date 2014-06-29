@@ -16,7 +16,8 @@ var options = {
   entry_path: null,
   view_path: null,
   package_path: null,
-  package: null
+  package: null,
+  serverTag: null
 }
 
 module.exports = {
@@ -33,13 +34,14 @@ function buildApp(app_name, user_name){
   options.app_name     =  app_name;
   options.user_name    =  user_name;
   options.app_path     =  Path.join( process.cwd(), "apps", options.app_name);
-  options.temp_path     =  Path.join( process.cwd(), "tmp");
+  options.temp_path    =  Path.join( process.cwd(), "tmp");
+  options.serverTag    = "{3vot}";
 
   options.package_path =  Path.join( options.app_path,   "package.json" );
   options.dist_path    =  Path.join( options.app_path,   "app");
-  options.entry_path   =  Path.join( options.app_path,   "code");
+  options.entry_path   =  Path.join( options.app_path );
   options.view_path    =  Path.join( options.entry_path, "views");
-
+  
   options.package = require( options.package_path ) 
 
   Q.all( _createBundlesPromises() )
@@ -55,11 +57,10 @@ function _build3VOTJS(){
   var deferred = Q.defer();
   var filename = "3vot.js"
   
-  saveFile(options.dist_path, filename, 'require("3vot")( require("../package") )' ) 
-  .then( function(){ return _bundleEntry(filename, options.dist_path, "uglifyify"); } )
+  saveFile(options.entry_path, filename, 'require("3vot")( require("./package") )' ) 
+  //.then( function(){ return _bundleEntry(filename, options.dist_path, "uglifyify"); } )
   .then( deferred.resolve )
   .fail( deferred.reject );
-
   return deferred.promise;
 }
 
@@ -67,20 +68,15 @@ function _build3VOTJS(){
 function buildHtml(){
   var deferred = Q.defer();
   var indexDestPath = Path.join( options.dist_path, "index.html" );
-  var headProbablePath = Path.join( options.view_path, "head.html" );
 
-  var head = ""
-  fs.readFile( headProbablePath, function(err, file){
-    if(!err) head = file;
-    var htmlTemplate = fs.readFileSync( process.cwd(), 'templates', "html.eco" ), "utf-8" )
-    var html = eco.render(htmlTemplate, { app_name: options.app_name, user_name: options.user_name, head: head } );
+  var htmlTemplate = fs.readFileSync( Path.join( process.cwd(), "apps", options.app_name , "index.html" ), "utf-8" )
+  var html = eco.render(htmlTemplate, options );
 
-    fs.writeFile( indexDestPath, html, function(err){
-      if(err) return deferred.reject(err);
-      deferred.resolve(html);
-    });
+  fs.writeFile( indexDestPath, html, function(err){
+    if(err) return deferred.reject(err);
+    deferred.resolve(html);
   });
-  
+
   return deferred.promise;
 }
 
@@ -99,8 +95,6 @@ function saveFile(path, filename, contents ){
   return deferred.promise;
 }
 
-//private
-
 function _createBundlesPromises(){
  var bundlePromises = [];
   var files = fs.readdirSync(options.entry_path);
@@ -110,7 +104,7 @@ function _createBundlesPromises(){
     var file_with_path = Path.join( options.entry_path , file_name );
     var stat = fs.statSync(file_with_path)
 
-    if (!stat.isDirectory() && file_with_path.indexOf(".js") > -1){ 
+    if (!stat.isDirectory() && Path.extname(file_with_path) === ".js"){ 
       bundlePromises.push( _bundleEntry( file_name ) );
     }
   }
@@ -143,7 +137,7 @@ function _bundleEntry(entryName, path, avoidTransform){
       if (err) return deferred.reject(err)
       saveFile( options.dist_path, entryName , src )
       .then( function(){ deferred.resolve( src ) }  )
-      .fail( function(saveError){ deferred.reject(saveError)  }  )
+      .fail( function(saveError){ deferred.reject(saveError);  }  )
     }
   );
   return deferred.promise;

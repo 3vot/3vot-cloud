@@ -29,7 +29,9 @@ var promptOptions = {
   keys: null,
   key: null,
   uploadSource: null,
-  uploadApp: null
+  uploadApp: null,
+  transform: null,
+  production: null
 }
 
 var tempVars = {
@@ -55,10 +57,10 @@ function execute(options){
     .then( function(){ return AppBuild( promptOptions.app_name, "demo", true ) })
     .then( buildPackage )
     .then( uploadSourceCode )
-    .then( promptOptions.uploadAppFiles || uploadAppFiles )
+    .then( function(){ if(promptOptions.transform) return promptOptions.transform(tempVars); return false; } )
+    .then( uploadAppFiles )
     .then( createApp )
     .then( function(){ 
-      Log.info("App Available at: http://" + promptOptions.paths.productionBucket + "/" + promptOptions.user_name + "/" + promptOptions.app_name +  "_" + tempVars.app_version )
       return deferred.resolve( tempVars.app ) ;
     })
     .fail( function(err){ return deferred.reject(err); } );
@@ -75,7 +77,9 @@ function getAppVersion(){
         tempVars.app_version
       }
       else{
-        tempVars.app_version = App.last().version + 1
+        tempVars.app = App.last()
+        tempVars.app.version +=1;
+        tempVars.app_version = tempVars.app.version;
       }
       return deferred.resolve( this ) 
     },
@@ -88,6 +92,7 @@ function getAppVersion(){
 }
 
 function adjustPackage(){
+  //Adjust Package To Version
   var deferred = Q.defer();
 
   Log.debug("Adjusting the package.json with the new version", "actions/app_upload", 96)
@@ -161,7 +166,9 @@ function uploadAppFiles(){
   var apps = WalkDir( Path.join( process.cwd(), "apps", promptOptions.app_name, "app" ) );
 
   apps.forEach( function(path){
-    path.key = promptOptions.key + "_" + tempVars.app_version + "/" + path.name
+    if(promptOptions.production) path.key = promptOptions.key + "/" + path.name
+    else path.key = promptOptions.key + "_" + tempVars.app_version + "/" + path.name
+    
     uploadPromises.push( function(callback) { 
       AwsHelpers.uploadFile( promptOptions.paths.productionBucket, path )
       .then( function(){ callback(null,true) } ) 

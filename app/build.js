@@ -21,7 +21,7 @@ var tempVars={
 }
 
 function execute( app_name, target, buildDependency, domain ){
-  Log.debug("Building App " + app_name, "actions/salesforce_setup", 35)
+  Log.debug("Building App " + app_name, "app/build", 35)
 
   var deferred = Q.defer();
   var pkgPath = Path.join( process.cwd(), "3vot.json");
