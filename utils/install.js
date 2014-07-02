@@ -64,6 +64,16 @@ function installNPM(){
   var spawn = require('child_process').spawn,
       npm    = spawn(npmcommand, ['install', '.']);
 
+
+  npm.stderr.setEncoding('utf8');
+  npm.stderr.on('data', function (data) {
+    Log.debug(data, "utils/install", 74);
+  });
+
+  npm.on('error', function (err) {
+    Log.debug(err, "utils/install", 74);
+  });
+
   npm.stdout.on('data', function (data) {
     //Log.debug(data, "utils/install", 66);
   });
