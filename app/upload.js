@@ -51,12 +51,13 @@ function execute(options){
     promptOptions= options;
     promptOptions.key = promptOptions.keys.join("/")
 
+
     getAppVersion()
     .then( adjustPackage )
     .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user_name) })
     .then( function(){ return AppBuild( promptOptions.app_name, "demo", true ) })
     .then( buildPackage )
-    .then( uploadSourceCode )
+    .then( function(){ if(promptOptions.uploadSource) return uploadSourceCode(); return false; } )
     .then( function(){ if(promptOptions.transform) return promptOptions.transform(tempVars); return false; } )
     .then( uploadAppFiles )
     .then( createApp )
@@ -119,7 +120,9 @@ function buildPackage(){
       filter: function () {
         return !this.basename.match(/^\./) &&
                !this.basename.match(/^node_modules$/) &&
-               !this.basename.match(/^\.git/) 
+               !this.basename.match(/^\.git/) &&
+               !this.basename.match(/^app$/) 
+
       }
    });
 

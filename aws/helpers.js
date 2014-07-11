@@ -57,7 +57,7 @@ Helpers.getObjectFromBucket = function(destinationBucket, key){
 
 Helpers.uploadFile = function(bucket, fileObject, deferred, count){
   // FileObjet: body , path, key, cache
-  Log.debug("Uploading File: " + fileObject.path  , "aws/helpers", 69 );
+  Log.debug("Uploading File: " + fileObject.path  , "aws/helpers", 60 );
 
   var deferred = deferred || Q.defer();
   if(!count) count = 1
@@ -82,7 +82,7 @@ Helpers.uploadFile = function(bucket, fileObject, deferred, count){
       function(err, data) {
         if (err) {
           if( reject(err) ) return ;
-          Log.debug("Retrying Upload (" + count + ")"  , "aws/helpers", 69 );
+          Log.debug("Retrying Upload (" + count + ")"  , "aws/helpers", 85 );
           Helpers.uploadFile(bucket, fileObject, deferred, count++ )
         }
         else{
@@ -94,7 +94,7 @@ Helpers.uploadFile = function(bucket, fileObject, deferred, count){
   }
   catch(err){
     if ( reject(err) ) return ;
-    Log.debug("Retrying Upload (" + count + ")"  , "aws/helpers", 69 );
+    Log.debug("Retrying Upload (" + count + ")"  , "aws/helpers", 97 );
     Helpers.uploadFile(bucket, fileObject, deferred, count++ )
   }
 

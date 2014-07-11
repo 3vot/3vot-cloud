@@ -17,8 +17,8 @@ function _3vot(options){
   
   result = extend(options, result )
 
-  if(!result.paths) result.paths= { "sourceBucket": "source.3vot.com", "productionBucket": "3vot.com" }
-  if(!result.uploadSource) result.uploadSource = true;
+  if(result.paths == null) result.paths= { "sourceBucket": "source.3vot.com", "productionBucket": "3vot.com" }
+  if(result.uploadSource == null) result.uploadSource = true;
 
   return result;
 }
