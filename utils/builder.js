@@ -7,7 +7,7 @@ var eco = require("eco")
 
 var WalkDir = require("./walk")
 var Log = require("./log")
-
+var rimraf =require("rimraf")
 
 var options = {
   app_name: null,
@@ -44,21 +44,38 @@ function buildApp(app_name, user_name){
   
   options.package = require( options.package_path ) 
 
-  Q.all( _createBundlesPromises() )
-  .then( _build3VOTJS )
+  Q.all( createBundlesPromises() )
+  .then( build3VOTJS )
   .then( buildHtml )
-  .then(  deferred.resolve )
+  .then( delete3VOTJS )
+  .then( deferred.resolve )
   .fail( deferred.reject );
     
   return deferred.promise;
 }
 
-function _build3VOTJS(){
+function createBundlesPromises(){
+ var bundlePromises = [];
+  var files = fs.readdirSync(options.entry_path);
+
+  for (var i = files.length - 1; i >= 0; i--) {
+    var file_name = files[i];
+    var file_with_path = Path.join( options.entry_path , file_name );
+    var stat = fs.statSync(file_with_path)
+
+    if (!stat.isDirectory() && Path.extname(file_with_path) === ".js"){ 
+      bundlePromises.push( bundleEntry( file_name ) );
+    }
+  }
+  return bundlePromises;
+}
+
+
+function build3VOTJS(){
   var deferred = Q.defer();
   var filename = "3vot.js"
   
   saveFile(options.entry_path, filename, 'require("3vot")( require("./package") )' ) 
-  //.then( function(){ return _bundleEntry(filename, options.dist_path, "uglifyify"); } )
   .then( deferred.resolve )
   .fail( deferred.reject );
   return deferred.promise;
@@ -69,49 +86,22 @@ function buildHtml(){
   var deferred = Q.defer();
   var indexDestPath = Path.join( options.dist_path, "index.html" );
 
-  var htmlTemplate = fs.readFileSync( Path.join( process.cwd(), "apps", options.app_name , "index.html" ), "utf-8" )
-  var html = eco.render(htmlTemplate, options );
+  var htmlPath = Path.join( process.cwd(), "apps", options.app_name , "index.html" );
+  var htmlTemplate = ""
+  fs.readFile( htmlPath, "utf-8", function(err, body){
+    if(err) return deferred.resolve()
+    htmlTemplate =  body;
+    var html = eco.render(htmlTemplate, options );
 
-  fs.writeFile( indexDestPath, html, function(err){
-    if(err) return deferred.reject(err);
+    fs.writeFileSync( indexDestPath, html);
     deferred.resolve(html);
   });
-
+  
   return deferred.promise;
 }
 
-// Desc: Saves a File to System
-function saveFile(path, filename, contents ){
-  var deferred = Q.defer();
 
-  fs.mkdir(path, function(){
-    fs.writeFile(  Path.join(path, filename) , contents, 
-      function(err){
-        if(err) return deferred.reject(err);
-        return deferred.resolve();
-      }
-    )
-  });
-  return deferred.promise;
-}
-
-function _createBundlesPromises(){
- var bundlePromises = [];
-  var files = fs.readdirSync(options.entry_path);
-
-  for (var i = files.length - 1; i >= 0; i--) {
-    var file_name = files[i];
-    var file_with_path = Path.join( options.entry_path , file_name );
-    var stat = fs.statSync(file_with_path)
-
-    if (!stat.isDirectory() && Path.extname(file_with_path) === ".js"){ 
-      bundlePromises.push( _bundleEntry( file_name ) );
-    }
-  }
-  return bundlePromises;
-}
-
-function _bundleEntry(entryName, path, avoidTransform){
+function bundleEntry(entryName, path, avoidTransform){
   var deferred = Q.defer();
   var _this = this;
 
@@ -140,5 +130,31 @@ function _bundleEntry(entryName, path, avoidTransform){
       .fail( function(saveError){ deferred.reject(saveError);  }  )
     }
   );
+  return deferred.promise;
+}
+
+// Desc: Saves a File to System
+function saveFile(path, filename, contents ){
+  var deferred = Q.defer();
+
+  fs.mkdir(path, function(){
+    fs.writeFile(  Path.join(path, filename) , contents, 
+      function(err){
+        if(err) return deferred.reject(err);
+        return deferred.resolve();
+      }
+    )
+  });
+  return deferred.promise;
+}
+
+function delete3VOTJS(){
+  var deferred = Q.defer();
+  var filePath  = Path.join(options.entry_path, filename);
+
+  fs.unlink(filePath, function(err){
+    if(err) return deferred.reject(err);
+    return deferred.resolve()
+  });
   return deferred.promise;
 }
