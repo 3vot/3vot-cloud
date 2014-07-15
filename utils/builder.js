@@ -21,8 +21,7 @@ var options = {
 }
 
 module.exports = {
-  buildApp: buildApp,
-  saveFile: saveFile
+  buildApp: buildApp
 }
 
 // Builds the App using Browserify using Transformations and excluding external dependencies.
@@ -42,8 +41,9 @@ function buildApp(app_name, user_name){
   
   options.package = require( options.package_path ) 
 
+  build3VOTJS();
+
   Q.all( createBundlesPromises() )
-  .then( build3VOTJS )
   .then( delete3VOTJS )
   .then( deferred.resolve )
   .fail( deferred.reject );
@@ -69,14 +69,9 @@ function createBundlesPromises(){
 
 
 function build3VOTJS(){
-  var deferred = Q.defer();
-  var filename = "3vot.js"
-  saveFile(options.entry_path, filename, 'require("3vot")( require("./package") )' ) 
-  .then( deferred.resolve )
-  .fail( deferred.reject );
-  return deferred.promise;
+  var filename = "3vot.js";
+  fs.writeFileSync( Path.join(options.entry_path, filename), 'require("3vot")( require("./package") )' ) 
 }
-
 
 function bundleEntry(entryName, path){
   var deferred = Q.defer();
@@ -103,26 +98,10 @@ function bundleEntry(entryName, path){
     function(err, src) {
       //if (err && entryName == "3vot.js") return deferred.resolve();  //ignores 3vot.js not found
       if (err) return deferred.reject(err)
-      saveFile( options.dist_path, entryName , src )
-      .then( function(){ deferred.resolve( src ) }  )
-      .fail( function(saveError){ deferred.reject(saveError);  }  )
+      fs.writeFileSync( Path.join( options.dist_path, entryName ), src )
+      return deferred.resolve(src)
     }
   );
-  return deferred.promise;
-}
-
-// Desc: Saves a File to System
-function saveFile(path, filename, contents ){
-  var deferred = Q.defer();
-
-  fs.mkdir(path, function(){
-    fs.writeFile(  Path.join(path, filename) , contents, 
-      function(err){
-        if(err) return deferred.reject(err);
-        return deferred.resolve();
-      }
-    )
-  });
   return deferred.promise;
 }
 

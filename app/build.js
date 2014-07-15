@@ -58,7 +58,7 @@ function rimrafApp(){
     if(err) return deferred.reject(err)
     fs.mkdir(path, function(err){
       if(err) return deferred.reject(err)
-      deferred.resolve()
+      return deferred.resolve()
     });
   })
   return deferred.promise;
@@ -84,9 +84,11 @@ function transformPath(filePath){
   for (var i = pathsToExclude.length - 1; i >= 0; i--) {
     var excludePath = pathsToExclude[i];
     if(filePath.indexOf( Path.join(tempVars.appPath, excludePath) ) == 0){
-      Log.debug("Excluding Path: " + filePath, "app/build", 81);
+      Log.debug("Excluding Path: " + filePath, "app/build", 87);
       return false;
     }
+    var dirPath = filePath.substr(0, filePath.lastIndexOf("/") );
+    if( dirPath == tempVars.appPath && Path.extname(filePath) == ".js" ) return false
   };
   return true
 }
