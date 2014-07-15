@@ -22,7 +22,6 @@ var options = {
 
 module.exports = {
   buildApp: buildApp,
-  buildHtml: buildHtml,
   saveFile: saveFile
 }
 
@@ -38,7 +37,7 @@ function buildApp(app_name, user_name){
 
   options.package_path =  Path.join( options.app_path,   "package.json" );
   options.dist_path    =  Path.join( options.app_path,   "app");
-  options.entry_path   =  Path.join( options.app_path );
+  options.entry_path   =  options.app_path;
   options.view_path    =  Path.join( options.entry_path, "views");
   
   options.package = require( options.package_path ) 
@@ -72,7 +71,6 @@ function createBundlesPromises(){
 function build3VOTJS(){
   var deferred = Q.defer();
   var filename = "3vot.js"
-  
   saveFile(options.entry_path, filename, 'require("3vot")( require("./package") )' ) 
   .then( deferred.resolve )
   .fail( deferred.reject );
@@ -103,7 +101,7 @@ function bundleEntry(entryName, path){
 
   b.bundle( {}, 
     function(err, src) {
-      if (err && entryName == "3vot.js") return deferred.resolve();  //ignores 3vot.js not found
+      //if (err && entryName == "3vot.js") return deferred.resolve();  //ignores 3vot.js not found
       if (err) return deferred.reject(err)
       saveFile( options.dist_path, entryName , src )
       .then( function(){ deferred.resolve( src ) }  )
@@ -130,13 +128,13 @@ function saveFile(path, filename, contents ){
 
 function delete3VOTJS(){
   var deferred = Q.defer();
+  var filename = "3vot.js"
   var filePath  = Path.join(options.entry_path, filename);
-  var fs.stat(filePath, function(err, stat){
+  fs.stat(filePath, function(err, stat){
     if(err) return deferred.reject(err);
     if(stat.isFile()) fs.unlinkSync(filePath);
     return deferred.resolve()
   });
-  })
-  
+
   return deferred.promise;
 }

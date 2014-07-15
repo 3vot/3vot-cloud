@@ -17,7 +17,8 @@ var promptOptions= {
 }
 
 var tempVars={
-  app: null
+  app: null,
+  app_path: null
 }
 
 function execute( app_name, target, buildDependency, domain ){
@@ -37,9 +38,11 @@ function execute( app_name, target, buildDependency, domain ){
     app_package: appPkg,
     domain: domain
   }
-  
+
+  tempVars.appPath =  Path.join( process.cwd(), "apps", app_name);
+
   rimrafApp()
-  .then( fuction(){ return Builder.buildApp( promptOptions.app_name, pck.user_name ) }  )
+  .then( function(){ return Builder.buildApp( promptOptions.app_name, pck.user_name ) }  )
   .then( function(){ return transformAssets( promptOptions.app_name ) })
   .then( function(){ return deferred.resolve(promptOptions.app_name) })
   .fail( function(err){ deferred.reject(err); })
@@ -49,7 +52,8 @@ function execute( app_name, target, buildDependency, domain ){
 
 function rimrafApp(){
   var deferred = Q.defer();
-  var path = Path.join( process.cwd(), "apps", promptOptions.app_name, "app")
+
+  var path = Path.join( tempVars.appPath, "app")
   rimraf(path, function(err){
     if(err) return deferred.reject(err)
     fs.mkdir(path, function(err){
@@ -61,23 +65,25 @@ function rimrafApp(){
 }
 
 function transformAssets(app_name){
-  var assets = WalkDir( Path.join( process.cwd(), "apps", app_name ) );
+  var assets = WalkDir( tempVars.appPath );
   assets.forEach( function(path){
-    if(transformPath(path)){
+    if(transformPath(path.path)){
       var file = fs.readFileSync( path.path); 
-      var filePath = Path.join( process.cwd(), "apps", app_name, "app", "assets", path.name );
-      var dirPath = filePath.substr(0, filePath.lastIndexOf("/") );
+      var relativeFilePath = path.path.split( tempVars.appPath )[1]; 
+      var dirPath = relativeFilePath.substr(0, relativeFilePath.lastIndexOf("/") );
+      dirPath = Path.join( tempVars.appPath , "app", dirPath );
       mkpath.sync( dirPath );
+      var filePath = Path.join( tempVars.appPath, "app", relativeFilePath);
       fs.writeFileSync( filePath  , file );
     }
   });
 }
 
-var pathsToExclude = ["/code", "/app", "/node_modules","/package.json","./git",".gitignore"] 
+var pathsToExclude = ["code", "app", "node_modules","package.json",".git",".gitignore"] 
 function transformPath(filePath){
   for (var i = pathsToExclude.length - 1; i >= 0; i--) {
     var excludePath = pathsToExclude[i];
-    if(filePath.indexOf(excludePath) == 0){
+    if(filePath.indexOf( Path.join(tempVars.appPath, excludePath) ) == 0){
       Log.debug("Excluding Path: " + filePath, "app/build", 81);
       return false;
     }
