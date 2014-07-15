@@ -30,7 +30,6 @@ function execute( app_name, target, buildDependency, domain ){
   var appPkgPath = Path.join( process.cwd(), "apps", app_name, "package.json");
   var appPkg  = require(appPkgPath);
 
-
   promptOptions= { 
     app_name: app_name,
     target: target,
@@ -39,8 +38,8 @@ function execute( app_name, target, buildDependency, domain ){
     domain: domain
   }
   
-  Builder.buildApp( promptOptions.app_name, pck.user_name )
-  .then( rimrafAssets )
+  rimrafApp()
+  .then( fuction(){ return Builder.buildApp( promptOptions.app_name, pck.user_name ) }  )
   .then( function(){ return transformAssets( promptOptions.app_name ) })
   .then( function(){ return deferred.resolve(promptOptions.app_name) })
   .fail( function(err){ deferred.reject(err); })
@@ -48,10 +47,9 @@ function execute( app_name, target, buildDependency, domain ){
   return deferred.promise;
 }
 
-function rimrafAssets(){
+function rimrafApp(){
   var deferred = Q.defer();
-  
-  var path = Path.join( process.cwd(), "apps", promptOptions.app_name, "app", "assets")
+  var path = Path.join( process.cwd(), "apps", promptOptions.app_name, "app")
   rimraf(path, function(err){
     if(err) return deferred.reject(err)
     fs.mkdir(path, function(err){
@@ -63,18 +61,28 @@ function rimrafAssets(){
 }
 
 function transformAssets(app_name){
-  
-  var assets = WalkDir( Path.join( process.cwd(), "apps", app_name, "assets" ) );
-
+  var assets = WalkDir( Path.join( process.cwd(), "apps", app_name ) );
   assets.forEach( function(path){
-    var file = fs.readFileSync( path.path);
-    
-    var filePath = Path.join( process.cwd(), "apps", app_name, "app", "assets", path.name );
-    var dirPath = filePath.substr(0, filePath.lastIndexOf("/") );
-    mkpath.sync( dirPath );
-    fs.writeFileSync( filePath  , file );
-    
+    if(transformPath(path)){
+      var file = fs.readFileSync( path.path); 
+      var filePath = Path.join( process.cwd(), "apps", app_name, "app", "assets", path.name );
+      var dirPath = filePath.substr(0, filePath.lastIndexOf("/") );
+      mkpath.sync( dirPath );
+      fs.writeFileSync( filePath  , file );
+    }
   });
+}
+
+var pathsToExclude = ["/code", "/app", "/node_modules","/package.json","./git",".gitignore"] 
+function transformPath(filePath){
+  for (var i = pathsToExclude.length - 1; i >= 0; i--) {
+    var excludePath = pathsToExclude[i];
+    if(filePath.indexOf(excludePath) == 0){
+      Log.debug("Excluding Path: " + filePath, "app/build", 81);
+      return false;
+    }
+  };
+  return true
 }
 
 module.exports = execute;

@@ -22,7 +22,6 @@ var options = {
 
 module.exports = {
   buildApp: buildApp,
-//  buildDependency: buildDependency,
   buildHtml: buildHtml,
   saveFile: saveFile
 }
@@ -46,7 +45,6 @@ function buildApp(app_name, user_name){
 
   Q.all( createBundlesPromises() )
   .then( build3VOTJS )
-  .then( buildHtml )
   .then( delete3VOTJS )
   .then( deferred.resolve )
   .fail( deferred.reject );
@@ -81,27 +79,8 @@ function build3VOTJS(){
   return deferred.promise;
 }
 
-//Build and saves the HTML Main file
-function buildHtml(){
-  var deferred = Q.defer();
-  var indexDestPath = Path.join( options.dist_path, "index.html" );
 
-  var htmlPath = Path.join( process.cwd(), "apps", options.app_name , "index.html" );
-  var htmlTemplate = ""
-  fs.readFile( htmlPath, "utf-8", function(err, body){
-    if(err) return deferred.resolve()
-    htmlTemplate =  body;
-    var html = eco.render(htmlTemplate, options );
-
-    fs.writeFileSync( indexDestPath, html);
-    deferred.resolve(html);
-  });
-  
-  return deferred.promise;
-}
-
-
-function bundleEntry(entryName, path, avoidTransform){
+function bundleEntry(entryName, path){
   var deferred = Q.defer();
   var _this = this;
 
@@ -114,7 +93,7 @@ function bundleEntry(entryName, path, avoidTransform){
   _ref = options.package.threevot.transforms;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     transform = _ref[_i];   
-    if(transform !== avoidTransform) b.transform(transform);
+    b.transform(transform);
   }
 
   for (key in options.package.threevot.external) {
@@ -124,6 +103,7 @@ function bundleEntry(entryName, path, avoidTransform){
 
   b.bundle( {}, 
     function(err, src) {
+      if (err && entryName == "3vot.js") return deferred.resolve();  //ignores 3vot.js not found
       if (err) return deferred.reject(err)
       saveFile( options.dist_path, entryName , src )
       .then( function(){ deferred.resolve( src ) }  )
@@ -151,10 +131,12 @@ function saveFile(path, filename, contents ){
 function delete3VOTJS(){
   var deferred = Q.defer();
   var filePath  = Path.join(options.entry_path, filename);
-
-  fs.unlink(filePath, function(err){
+  var fs.stat(filePath, function(err, stat){
     if(err) return deferred.reject(err);
+    if(stat.isFile()) fs.unlinkSync(filePath);
     return deferred.resolve()
   });
+  })
+  
   return deferred.promise;
 }
