@@ -2,6 +2,7 @@ var fs = require("fs")
 var Path = require("path")
 var Log = require("./log")
 
+var ignoreDirs = [".git",".svn"]
 
 function walkDir(dir, results) {
   var results = [];
@@ -15,7 +16,7 @@ function walkDir(dir, results) {
   list.forEach(function(sourceFile) {
     file = Path.join( dir, sourceFile );
     var stat = fs.statSync(file);
-    if ( stat && stat.isDirectory() ){
+    if ( stat && stat.isDirectory() && ignoreDirs.indexOf(sourceFile) == -1  ){
       var recursiveResult = walkDir( file , results );
       for(index in recursiveResult){
         var recursive = recursiveResult[ index ];
