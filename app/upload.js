@@ -31,34 +31,34 @@ var promptOptions = {
   uploadSource: null,
   uploadApp: null,
   transform: null,
-  production: null
+  production: null,
+  distPath: null
 }
 
 var tempVars = {
   app: null,
   package_json: null,
-  app_version: 1
+  app_version: 1,
+  dist_path: null
 }
 
 function execute(options){
     var deferred = Q.defer();
-   // if( !options.paths ) options.paths = { sourceBucket: "source.3vot.com", productionBucket: "3vot.com" }
-    if( !options.keys ) options.keys = [options.user_name, options.app_name]
-    if( !options.production ) options.production = false
-    if( options.uploadSource == null ) options.uploadSource = true
-    if( options.uploadApp == null ) options.uploadApp = true
+
+    if( !options.package.threevot.keys ) tempVars.keys = [options.user.user_name, options.package.name]
+    if( !options.promptValues.production ) options.promptValues.production = false
+    if( options.promptValues.uploadApp == null ) options.promptValues.uploadApp = true
 
     promptOptions= options;
-    promptOptions.key = promptOptions.keys.join("/")
-
+    tempVars.key = tempVars.keys.join("/")
+    tempVars.dist_path =  Path.join( process.cwd(), promptOptions.package.threevot.distFolder);
 
     getAppVersion()
     .then( adjustPackage )
-    .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user_name) })
-    .then( function(){ return AppBuild( promptOptions.app_name, "demo", true ) })
+    .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user.user_name, promptOptions.user.public_dev_key) })
+    .then( function(){ return AppBuild( promptOptions, tempVars ) } )
     .then( buildPackage )
-    .then( function(){ if(promptOptions.uploadSource) return uploadSourceCode(); return false; } )
-    .then( function(){ if(promptOptions.transform) return promptOptions.transform(tempVars); return false; } )
+    .then( function(){ if(promptOptions.package.threevot.uploadSource) return uploadSourceCode(); return false; } )
     .then( uploadAppFiles )
     .then( createApp )
     .then( function(){ 
@@ -75,7 +75,7 @@ function getAppVersion(){
   callbacks={
     done: function(response){
       if(response.body.length == 0){
-        tempVars.app_version
+        tempVars.app_version = 1;
       }
       else{
         tempVars.app = App.last()
@@ -88,7 +88,7 @@ function getAppVersion(){
       return deferred.reject( error )
     }
   }
-  App.fetch( { query: { select: App.querySimpleByNameAndProfileSecurity, values: [ promptOptions.user_name, promptOptions.app_name ] }  }, callbacks )
+  App.fetch( { query: { select: App.querySimpleByNameAndProfileSecurity, values: [ promptOptions.user.user_name, promptOptions.package.name ] }  }, callbacks )
   return deferred.promise;
 }
 
@@ -98,12 +98,9 @@ function adjustPackage(){
 
   Log.debug("Adjusting the package.json with the new version", "actions/app_upload", 96)
 
-  var pck = require( Path.join( process.cwd(), "apps", promptOptions.app_name, "package.json" )  );
-  var vot = require( Path.join( process.cwd(), "3vot.json" )  )
-  pck.version = "0.0." + tempVars.app_version;
-  pck.threevot.version = ""+ tempVars.app_version;
-  tempVars.package_json = pck;
-  fs.writeFile( Path.join( process.cwd(), "apps", promptOptions.app_name, "package.json" ), JSON.stringify(pck,null,'\t') , function(err){
+  promptOptions.package.version = "0.0." + tempVars.app_version;
+  promptOptions.package.threevot.version = "" + tempVars.app_version;
+  fs.writeFile( Path.join( process.cwd(), "package.json" ), JSON.stringify(promptOptions.package,null,'\t') , function(err){
     if(err) return deferred.reject(err);
     deferred.resolve()
   });
@@ -112,10 +109,10 @@ function adjustPackage(){
 
 function buildPackage(){
   var deferred = Q.defer();
-  Log.debug("Building App " + promptOptions.app_name, "actions/app_upload", 96)
+  Log.debug("Building App " + promptOptions.package.name, "actions/app_upload", 96)
 
   var appFolderReader = fstream.Reader(
-    { path: 'apps/' + promptOptions.app_name, 
+    { path: './', 
       type: "Directory", 
       filter: function () {
         return !this.basename.match(/^\./) &&
@@ -127,10 +124,10 @@ function buildPackage(){
    });
 
   var stream = appFolderReader.pipe(tar.Pack()).pipe(zlib.createGzip());
-  stream.pipe( fstream.Writer( Path.join( process.cwd(), "tmp", promptOptions.app_name + ".tar.gz") ) )
+  stream.pipe( fstream.Writer( Path.join( process.cwd(), "tmp", promptOptions.package.name + ".tar.gz") ) )
 
   stream.on("end", function(){
-    var url = Path.join( process.cwd(), "tmp", promptOptions.app_name + ".tar.gz")
+    var url = Path.join( process.cwd(), "tmp", promptOptions.package.name + ".tar.gz")
     return deferred.resolve(url);
   });
 
@@ -141,16 +138,22 @@ function buildPackage(){
 }
 
 function uploadSourceCode(){
-  if (!promptOptions.uploadSource ) return true;
   var deferred = Q.defer();  
-  Log.debug("Uploading Package to 3VOT App Store", "actions/app_upload", 139)
 
-  var fileObject = {
-    path: Path.join( process.cwd(), 'tmp', promptOptions.app_name + '.tar.gz'),
-    key: promptOptions.key  + "_" +  tempVars.app_version  + '.3vot'
+  if (promptOptions.package.threevot.uploadSource === false ){
+    process.nextTick(function(){deferred.resolve()})
+    return deferred.promise;
   }
 
-  AwsHelpers.uploadFile( promptOptions.paths.sourceBucket, fileObject )
+  var fileObject = {
+    path: Path.join( process.cwd(), 'tmp', promptOptions.package.name + '.tar.gz'),
+    key: tempVars.key  + "_" +  tempVars.app_version  + '.3vot'
+  }
+
+  Log.debug("Uploading Package to 3VOT App Store to " + fileObject.key, "actions/app_upload", 139)
+
+
+  AwsHelpers.uploadFile( promptOptions.package.threevot.paths.sourceBucket, fileObject )
   .then( function(s3Error, data) {
     Log.debug("Package Uploaded Correctly to 3VOT App Store", "actions/app_upload", 150)
     deferred.resolve(data)
@@ -161,19 +164,22 @@ function uploadSourceCode(){
 }
 
 function uploadAppFiles(){
-  if (!promptOptions.uploadApp) return true;
+  if (!promptOptions.promptValues.uploadApp) return true;
   var deferred = Q.defer();  
-  Log.debug("Uploading App", "actions/app_upload", 157)
   
-  uploadPromises = []
-  var apps = WalkDir( Path.join( process.cwd(), "apps", promptOptions.app_name, "app" ) );
+  uploadPromises = [];
+  var baseKey = tempVars.key + "_" + tempVars.app_version;
+
+  var apps = WalkDir( Path.join( process.cwd(), promptOptions.package.threevot.distFolder ) );
+
+  Log.debug("Uploading " + apps.length + " to " + baseKey, "actions/app_upload", 157)
 
   apps.forEach( function(path){
-    if(promptOptions.production) path.key = promptOptions.key + "/" + path.name
-    else path.key = promptOptions.key + "_" + tempVars.app_version + "/" + path.name
+    if(promptOptions.promptValues.production) path.key = tempVars.key + "/" + path.name
+    else path.key = baseKey + "/" + path.name
     
     uploadPromises.push( function(callback) { 
-      AwsHelpers.uploadFile( promptOptions.paths.productionBucket, path )
+      AwsHelpers.uploadFile( promptOptions.package.threevot.paths.productionBucket, path )
       .then( function(){ callback(null,true) } ) 
       .fail( function(err){ callback(err) } ) 
     });
@@ -201,7 +207,7 @@ function createApp(){
     }
   }
 
-  values = { billing: { size: promptOptions.size }, name: promptOptions.app_name, public_dev_key: promptOptions.public_dev_key, user_name: promptOptions.user_name, marketing: { name: tempVars.package_json.threevot.displayName, description: tempVars.package_json.description  } }
+  values = {  name: promptOptions.package.name, public_dev_key: promptOptions.user.public_dev_key, user_name: promptOptions.user.user_name, marketing: { name: promptOptions.package.threevot.displayName, description: promptOptions.package.description  } }
   App.create( values, callbacks )
   
   return deferred.promise;

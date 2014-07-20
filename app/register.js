@@ -11,9 +11,9 @@ var Log = require("../utils/log")
 var location = "./apps/"
 
 var promptOptions = {
-  name: null,
-  user_name: null,
-  email: null
+  promptValues:null,
+  package: null,
+  user:null
 }
 
 var tempVars ={
@@ -24,13 +24,13 @@ var tempVars ={
 function execute(options){
   var deferred = Q.defer();
   promptOptions= options;
-  Log.debug("Creating Profile Object", "actions/profile_create", 26)
+  Log.debug("Registering Profile", "actions/profile_create", 26)
   
   create()
   .then( function(){ 
-    promptOptions.public_dev_key = tempVars.profile.security.public_dev_key
+    tempVars.public_dev_key = tempVars.profile.security.public_dev_key
     Log.info( "Here is your developer key: " + tempVars.profile.security.public_dev_key ) 
-    return deferred.resolve( promptOptions ) ;
+    return deferred.resolve( tempVars ) ;
   })
   .fail( function(err){ 
     Log.error(err, "actions/profile_create",35)
@@ -55,7 +55,7 @@ function create(){
     }
   }
 
-  Profile.create( { user_name: promptOptions.user_name, marketing: { name: promptOptions.name }, security: {}, contacts: { owner: { email: promptOptions.email } } }, callbacks )
+  Profile.create( { user_name: promptOptions.user_name, security: {}, marketing: {}, contacts: { owner: { email: promptOptions.email } } }, callbacks )
   return deferred.promise;
 } 
 

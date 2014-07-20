@@ -6,12 +6,10 @@ var Log = require("./log")
 
 var Q = require("q");
 
-function install( appName, destinationDir ){
+function install(){
   var deferred = Q.defer();
-  var app_path = Path.join( process.cwd(), "apps", appName )
-  process.chdir( app_path  );
+  var app_path = Path.join( process.cwd() )
       
-  //Destination DIR is always taken from the path where the node command is invoked
   
   var pkgPath = Path.join( process.cwd(), "package.json");
 
@@ -63,7 +61,6 @@ function installNPM(){
   
   var spawn = require('child_process').spawn,
       npm    = spawn(npmcommand, ['install', '.']);
-
 
   npm.stderr.setEncoding('utf8');
   npm.stderr.on('data', function (data) {

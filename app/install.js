@@ -10,22 +10,21 @@ var promptOptions= {
 }
 
 function execute( options ){
-  Log.debug("Installing " +  options.app_name, "actions/app_install", 16)
+  Log.debug("Installing " +  options.promptValues.app_name, "actions/app_install", 16)
   
   var deferred = Q.defer();
   
   promptOptions = options;
 
   installDependencies()
-  .then( function(){ return deferred.resolve(promptOptions.app_name) })
+  .then( function(){ return deferred.resolve(promptOptions.promptValues.app_name) })
   .fail( function(err){ deferred.reject(err); })
 
   return deferred.promise;
 }
 
 function installDependencies(){
-  var destinationDir = Path.join( "apps", promptOptions.app_name , "node_modules" );
-  return Install(promptOptions.app_name, destinationDir) 
+  return Install(promptOptions.promptValues.app_name) 
 }
 
 module.exports = execute;
