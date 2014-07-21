@@ -43,8 +43,11 @@ function execute( options , externalTempVars ){
   return deferred.promise;
   }
 
+  build3VOTJS();
+
   rimrafApp()
   .then( function(){ return Q.all( createBundlesPromises() ) } )
+  .then( delete3VOTJS )
   .then( transformAssets )
   .then( transformExcludedAssets  )
   .then( function(){ if(promptOptions.transform) return promptOptions.transform(tempVars); return false; } )
@@ -64,6 +67,24 @@ function rimrafApp(){
       return deferred.resolve()
     });
   })
+  return deferred.promise;
+}
+
+function build3VOTJS(){
+  var filename = "3vot.js";
+  fs.writeFileSync( Path.join(tempVars.app_path, filename), 'require("3vot")( require("./package") )' ) 
+}
+
+function delete3VOTJS(){
+  var deferred = Q.defer();
+  var filename = "3vot.js"
+  var filePath  = Path.join(tempVars.app_path, filename);
+  fs.stat(filePath, function(err, stat){
+    if(err) return deferred.reject(err);
+    if(stat.isFile()) fs.unlinkSync(filePath);
+    return deferred.resolve()
+  });
+
   return deferred.promise;
 }
 
@@ -195,7 +216,7 @@ function transformExcludedAssets(){
 
 
 function transformPath(filePath){
-  var pathsToExclude = ["code", promptOptions.package.threevot.distFolder , "node_modules", "package.json", ".git", ".gitignore", "bower_components"] 
+  var pathsToExclude = ["tmp", promptOptions.package.threevot.distFolder, "package.json", ".git", ".gitignore"] 
   pathsToExclude = pathsToExclude.concat( promptOptions.package.threevot.pathsToExclude || [] )
 
   for (var i = pathsToExclude.length - 1; i >= 0; i--) {

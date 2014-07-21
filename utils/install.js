@@ -83,6 +83,6 @@ function installNPM(){
   return deferred.promise;  
 }
 
-module.exports = install;
+module.exports = installNPM;
 
 install.installNPM = installNPM;

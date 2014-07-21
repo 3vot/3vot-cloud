@@ -171,15 +171,19 @@ function adjustIndex(){
 
   var deferred = Q.defer();
   var indexPath =  Path.join( process.cwd(), "index.html" )  
-  var indexBody = fs.readFileSync(indexPath)
+  if(fs.exists(indexPath), function(err, exists){
+    if(err || !exists) return deferred.resolve()
+    var indexBody = fs.readFileSync(indexPath)
 
-  var $ = cheerio.load(indexBody)
-  var body = $("body")
-  body.attr("id", "_3vot_" + promptOptions.promptValues.app_new_name)
+    var $ = cheerio.load(indexBody)
+    var body = $("body")
+    body.attr("id", "_3vot_" + promptOptions.promptValues.app_new_name)
 
-  fs.writeFile(indexPath, $.html(), function(err){
-    if(err) return deferred.reject(err)
-    return deferred.resolve();
+    fs.writeFile(indexPath, $.html(), function(err){
+      if(err) return deferred.reject(err)
+      return deferred.resolve();
+    })
+
   })
 
   return deferred.promise;

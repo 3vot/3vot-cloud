@@ -109,8 +109,8 @@ function spawn(commands){
 
 function getPackage(){
   var path = Path.join( process.cwd(), "package.json" );
-  if(!fs.statSync(path)) return {};
-  var result =  require( path );
+  var result = {}
+  if(fs.existsSync(path)) result =  require( path );
   return setDefaults(result);
 }
 
@@ -118,6 +118,7 @@ function setDefaults(result){
   if(!result.threevot) result.threevot =  {};
   result.threevot.paths = result.threevot.paths || { "sourceBucket": "source.3vot.com", "productionBucket": "3vot.com" }
   result.threevot.uploadSource = result.threevot.uploadSource || true;
+  result.threevot.build = result.threevot.build || true;
   result.threevot.distFolder = result.threevot.distFolder || "dist";  
   
   delete result.threevot.user_name;
