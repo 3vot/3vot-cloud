@@ -33,7 +33,7 @@ var tempVars= {
 }
 
 function execute( options ){
-  Log.info("Downloading " +  options.package.name + " from the 3VOT Marketplace")
+  Log.info("Downloading " +  options.promptValues.app_name + " from the 3VOT Marketplace")
   if(!options.promptValues.app_new_name) options.promptValues.app_new_name = options.promptValues.app_name
   var deferred = Q.defer();
   if( !options.package.keys ) tempVars.keys = [options.promptValues.app_user_name, options.promptValues.app_name];
@@ -49,20 +49,16 @@ function execute( options ){
   .then( clearTMPFolder )
   .then( adjustPackage )
   .then( adjustIndex )
-  .then( installDependencies )
   .then( function(){ 
-    var deferred = Q.defer();
-    promptOptions.package.name = promptOptions.promptValues.app_new_name;
-    AppBuild( promptOptions )
-    .then(deferred.resolve)
-    .fail(function(err){
-      Log.debug("Could not build App, probably from previous 3VOT Version, check docs." , "actions/app_download", 98)
-      Log.debug2(err);
-      deferred.resolve();
-    });
-    return deferred.promise;
+    var instructions = promptOptions.package.threevot.installInstructions;
+    Log.info("INSTRUCTIONS:") 
+    Log.info("1. cd into " + promptOptions.promptValues.app_new_name + " folder") 
+    if(instructions){ Log.info("2." + instructions) }
+    else if( Object.keys(promptOptions.package.dependencies).length>0){
+      Log.info("2. Use 'npm install .' to install dependencies")
+    }
+    return deferred.resolve(tempVars.app) 
   })
-  .then( function(){ deferred.resolve(tempVars.app) })
   .fail( function(err){ return deferred.reject(err); })
 
   return deferred.promise;
@@ -171,7 +167,7 @@ function adjustIndex(){
 
   var deferred = Q.defer();
   var indexPath =  Path.join( process.cwd(), "index.html" )  
-  if(fs.exists(indexPath), function(err, exists){
+  fs.exists(indexPath, function(err, exists){
     if(err || !exists) return deferred.resolve()
     var indexBody = fs.readFileSync(indexPath)
 
@@ -184,14 +180,12 @@ function adjustIndex(){
       return deferred.resolve();
     })
 
-  })
+  });
 
   return deferred.promise;
-
 }
 
 function installDependencies(){
-
   return Install.installNPM(promptOptions.promptValues.app_new_name) 
 }
 
