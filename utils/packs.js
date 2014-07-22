@@ -10,10 +10,10 @@ function get(options, oneUser){
   if(!options) options = {}
   if(!oneUser && oneUser != false) oneUser=true;
 
-  spawn(["get", "3vot"])
+  spawn(["get", options.namespace || "3vot"  ])
   .then( function(result){ 
-    result  = JSON.parse(result)
-    if(oneUser && (!result.users || result.users === {} )) return deferred.reject("No users found, use 3vot adduser ");
+    try{ result  = JSON.parse(result) }catch(err){ result = {} }
+    if(oneUser && (!result.users || result.users === {} )) return deferred.reject("No users found, use adduser ");
     var object = {};
     object.package = getPackage(options.app_name);
     object.user = result;
@@ -43,7 +43,7 @@ function promptForUser(object){
 
   prompt.start();
 
-  var description = "Select what Profile to use:\n";
+  var description = "Profile:\n";
   var index = 1;
   var userArray = [];
   for(user in object.user.users){
@@ -66,9 +66,9 @@ function promptForUser(object){
 
 }
 
-function set(contents){
+function set(contents, namespace){
   var deferred = Q.defer();
-  spawn(["set", "3vot", JSON.stringify(contents)])
+  spawn(["set", namespace || "3vot", JSON.stringify(contents)])
   .then( deferred.resolve )
   .fail( deferred.reject )
 
@@ -120,7 +120,8 @@ function setDefaults(result){
   result.threevot.uploadSource = result.threevot.uploadSource || true;
   result.threevot.build = result.threevot.build || true;
   result.threevot.distFolder = result.threevot.distFolder || "dist";  
-  
+  result.threevot.pathsToExclude =  result.threevot.pathsToExclude || ["node_modules"]
+
   delete result.threevot.user_name;
   delete result.threevot.public_dev_key;
   delete result.threevot.size;

@@ -58,9 +58,10 @@ function execute(options){
     .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user.user_name, promptOptions.user.public_dev_key) })
     .then( function(){ return AppBuild( promptOptions, tempVars ) } )
     .then( buildPackage )
-    .then( function(){ if(promptOptions.package.threevot.uploadSource) return uploadSourceCode(); return false; } )
+    .then( uploadSourceCode  )
     .then( uploadAppFiles )
     .then( createApp )
+    .then( clearTMPFolder )
     .then( function(){ 
       return deferred.resolve( tempVars.app ) ;
     })
@@ -138,12 +139,9 @@ function buildPackage(){
 }
 
 function uploadSourceCode(){
-  var deferred = Q.defer();  
+  if (promptOptions.package.threevot.uploadSource === false ) return true;
 
-  if (promptOptions.package.threevot.uploadSource === false ){
-    process.nextTick(function(){deferred.resolve()})
-    return deferred.promise;
-  }
+  var deferred = Q.defer();  
 
   var fileObject = {
     path: Path.join( process.cwd(), 'tmp', promptOptions.package.name + '.tar.gz'),
@@ -164,7 +162,8 @@ function uploadSourceCode(){
 }
 
 function uploadAppFiles(){
-  if (!promptOptions.promptValues.uploadApp) return true;
+  if (promptOptions.package.threevot.uploadApp === false) return true;
+
   var deferred = Q.defer();  
   
   uploadPromises = [];
@@ -210,6 +209,17 @@ function createApp(){
   values = {  name: promptOptions.package.name, public_dev_key: promptOptions.user.public_dev_key, user_name: promptOptions.user.user_name, marketing: { name: promptOptions.package.threevot.displayName, description: promptOptions.package.description  } }
   App.create( values, callbacks )
   
+  return deferred.promise;
+}
+
+
+function clearTMPFolder(){
+  var deferred = Q.defer();
+  var path = Path.join( process.cwd(), 'tmp' );
+  rimraf(path, function(err){
+    return deferred.resolve();
+  })
+
   return deferred.promise;
 }
 

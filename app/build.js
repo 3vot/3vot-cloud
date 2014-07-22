@@ -171,44 +171,47 @@ function transformExcludedAssets(){
   var deferred = Q.defer();
 
   var indexPath = Path.join( tempVars.app_path, "index.html" );
-  var indexBody = fs.readFileSync(indexPath,"utf-8");
-  var $ = cheerio.load( indexBody );
-  var filesToInclude = [];
+  fs.readFile(indexPath,"utf-8", function(err, indexBody){
+    if(err) return deferred.resolve();
 
-  findParts($("script"))
-  findParts($("link"))
+    var $ = cheerio.load( indexBody );
+    var filesToInclude = [];
+
+    findParts($("script"))
+    findParts($("link"))
+    if(filesToInclude.length == 0 ) return deferred.resolve();
+    for (var i = filesToInclude.length - 1; i >= 0; i--) {
+      copyPart(filesToInclude.pop());
+    };
 
 
-  function findParts(parts){
-    parts.each(function(index, part){
-      part = $(part);
-      var href = part.attr("href");
-      var src = part.attr("src");
-      var link = href || src || "";
-      if( link.indexOf("bower_components") > -1 || link.indexOf("node_modules") > -1) filesToInclude.push( link );
-    })
-  }
 
-  if(filesToInclude.length == 0 ) return deferred.resolve();
-  for (var i = filesToInclude.length - 1; i >= 0; i--) {
-    copyPart(filesToInclude.pop());
-  };
+    function findParts(parts){
+      parts.each(function(index, part){
+        part = $(part);
+        var href = part.attr("href");
+        var src = part.attr("src");
+        var link = href || src || "";
+        if( link.indexOf("bower_components") > -1 || link.indexOf("node_modules") > -1) filesToInclude.push( link );
+      })
+    }
 
-  function copyPart(filePath){
-    if(filePath.indexOf("{3vot}") == 0 ) filePath = filePath.substring(6);
-    var filePath = Path.join( tempVars.app_path, filePath );
-    var fileExt = Path.extname(filePath);
-    fs.readFile(filePath, function(err, fileContents){
-      if(err && filesToInclude.length == 0 ) return deferred.resolve()
-      var filePaths = getDistPaths(filePath);
-      mkpath.sync( filePaths[0] );
-      fs.writeFile( filePaths[1] , fileContents, function(err){
-        if(err) return deferred.reject(err)
-        if(filesToInclude.length == 0 ) return deferred.resolve()
-      });
-    })
-  }
 
+    function copyPart(filePath){
+      if(filePath.indexOf("{3vot}") == 0 ) filePath = filePath.substring(6);
+      var filePath = Path.join( tempVars.app_path, filePath );
+      var fileExt = Path.extname(filePath);
+      fs.readFile(filePath, function(err, fileContents){
+        if(err && filesToInclude.length == 0 ) return deferred.resolve()
+        var filePaths = getDistPaths(filePath);
+        mkpath.sync( filePaths[0] );
+        fs.writeFile( filePaths[1] , fileContents, function(err){
+          if(err) return deferred.reject(err)
+          if(filesToInclude.length == 0 ) return deferred.resolve()
+        });
+      })
+    }
+  });
 
   return deferred.promise;
 

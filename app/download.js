@@ -176,7 +176,7 @@ function adjustIndex(){
     var indexBody = fs.readFileSync(indexPath)
 
     var $ = cheerio.load(indexBody)
-    var body = $("body")
+    var body = $("#_3vot_" + promptOptions.promptValues.app_name)
     body.attr("id", "_3vot_" + promptOptions.promptValues.app_new_name)
 
     fs.writeFile(indexPath, $.html(), function(err){
