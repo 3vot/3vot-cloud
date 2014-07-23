@@ -80,6 +80,7 @@ function delete3VOTJS(){
   var filename = "3vot.js"
   var filePath  = Path.join(tempVars.app_path, filename);
   fs.stat(filePath, function(err, stat){
+    fs.closeSync(filePath);
     if(err) return deferred.reject(err);
     if(stat.isFile()) fs.unlinkSync(filePath);
     return deferred.resolve()
