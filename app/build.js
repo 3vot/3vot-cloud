@@ -71,16 +71,15 @@ function rimrafApp(){
 }
 
 function build3VOTJS(){
-  var filename = "3vot.js";
+  var filename = "_3vot.js";
   fs.writeFileSync( Path.join(tempVars.app_path, filename), 'require("3vot")( require("./package") )' ) 
 }
 
 function delete3VOTJS(){
   var deferred = Q.defer();
-  var filename = "3vot.js"
+  var filename = "_3vot.js"
   var filePath  = Path.join(tempVars.app_path, filename);
   fs.stat(filePath, function(err, stat){
-    fs.closeSync(filePath);
     if(err) return deferred.reject(err);
     if(stat.isFile()) fs.unlinkSync(filePath);
     return deferred.resolve()
@@ -131,6 +130,7 @@ function bundleEntry(entryName, path){
     function(err, src) {
       if(err && entryName == "3vot.js") return deferred.resolve();
       if (err) return deferred.reject(err)
+      if(entryName == "_3vot.js") entryName = "3vot.js"
       fs.writeFileSync( Path.join( tempVars.dist_path, entryName ), src )
 
       return deferred.resolve(src)
