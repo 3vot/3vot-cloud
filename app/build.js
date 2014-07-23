@@ -155,7 +155,7 @@ function transformAssets(){
     if(transformPath(path.path)){
       var file = fs.readFileSync( path.path); 
       var relativeFilePath = path.path.split( tempVars.app_path )[1]; 
-      var dirPath = relativeFilePath.substr(0, relativeFilePath.lastIndexOf("/") );
+      var dirPath = Path.dirname(relativeFilePath);
       dirPath = Path.join( tempVars.dist_path, dirPath );
       mkpath.sync( dirPath );
       var filePath = Path.join( tempVars.dist_path, relativeFilePath);
@@ -228,12 +228,12 @@ function transformPath(filePath){
     var excludePath = pathsToExclude[i];
     excludePath = Path.join(tempVars.app_path, excludePath);
     if(filePath.indexOf( excludePath ) == 0){
-      Log.debug("Excluding" + filePath + " because its in excludePath", "app/build", 87);
+      //Log.debug("Excluding" + filePath + " because its in excludePath", "app/build", 87);
       return false;
     }
-    var dirPath = filePath.substr(0, filePath.lastIndexOf("/") );
+    var dirPath = Path.dirname(filePath);
     if( dirPath == tempVars.app_path && Path.extname(filePath) == ".js" ){
-      Log.debug("Excluding " + filePath + " because it is a JS in route", "app/build", 87);
+      //Log.debug("Excluding " + filePath + " because it is a JS in route", "app/build", 87);
       return false
     }
   };
