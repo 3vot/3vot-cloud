@@ -128,7 +128,7 @@ function bundleEntry(entryName, path){
 
   b.bundle( {}, 
     function(err, src) {
-      if(err && entryName == "3vot.js") return deferred.resolve();
+      if(err && entryName == "_3vot.js") return deferred.resolve();
       if (err) return deferred.reject(err)
       if(entryName == "_3vot.js") entryName = "3vot.js"
       fs.writeFileSync( Path.join( tempVars.dist_path, entryName ), src )
