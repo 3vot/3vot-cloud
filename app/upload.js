@@ -19,6 +19,8 @@ var WalkDir = require("../utils/walk")
 var App = require("../models/app")
 var Log = require("../utils/log")
 var async = require("async")
+var rimraf = require("rimraf");
+
 
 var promptOptions = {
   public_dev_key: null,
