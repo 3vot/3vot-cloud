@@ -20,6 +20,8 @@ var Log = require("../utils/log")
 var App = require("../models/app")
 var AppBuild = require("./build")
 var rimraf = require("rimraf");
+var File = require("../utils/file")
+
 
 var promptOptions= { 
   promptValues:null,
@@ -43,12 +45,13 @@ function execute( options ){
 
   getApp()
   .then( function(){ return AwsCredentials.requestKeysFromProfile( "guest" ) })
-  .then( clearTMPFolder )  
+  .then( File.clearTMPFolder )  
   .then( downloadApp )
   .then( copyFolder )
   .then( clearTMPFolder )
   .then( adjustPackage )
   .then( adjustIndex )
+  .then( File.clearTMPFolder )
   .then( function(){ 
     var instructions = promptOptions.package.threevot.installInstructions;
     Log.info("INSTRUCTIONS:") 
@@ -185,8 +188,6 @@ function adjustIndex(){
   return deferred.promise;
 }
 
-function installDependencies(){
-  return Install.installNPM(promptOptions.promptValues.app_new_name) 
-}
+
 
 module.exports = execute;

@@ -10,6 +10,7 @@ var App = require("../models/app")
 var Log = require("../utils/log")
 var cheerio = require("cheerio")
 var Browserify = require("browserify");
+var File = require("../utils/file")
 
 var promptOptions= {
   user: null,
@@ -46,6 +47,7 @@ function execute( options , externalTempVars ){
   build3VOTJS();
 
   rimrafApp()
+  .then( File.clearTMPFolder )
   .then( function(){ return Q.all( createBundlesPromises() ) } )
   .then( delete3VOTJS )
   .then( transformAssets )

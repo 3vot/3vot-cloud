@@ -20,6 +20,7 @@ var App = require("../models/app")
 var Log = require("../utils/log")
 var async = require("async")
 var rimraf = require("rimraf");
+var File = require("../utils/file")
 
 
 var promptOptions = {
@@ -56,6 +57,7 @@ function execute(options){
     tempVars.dist_path =  Path.join( process.cwd(), promptOptions.package.threevot.distFolder);
 
     getAppVersion()
+    .then( File.clearTMPFolder )
     .then( adjustPackage )
     .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user.user_name, promptOptions.user.public_dev_key) })
     .then( function(){ return AppBuild( promptOptions, tempVars ) } )
@@ -63,7 +65,7 @@ function execute(options){
     .then( uploadSourceCode  )
     .then( uploadAppFiles )
     .then( createApp )
-    .then( clearTMPFolder )
+    .then( File.clearTMPFolder )
     .then( function(){ 
       return deferred.resolve( tempVars.app ) ;
     })
@@ -215,14 +217,6 @@ function createApp(){
 }
 
 
-function clearTMPFolder(){
-  var deferred = Q.defer();
-  var path = Path.join( process.cwd(), 'tmp' );
-  rimraf(path, function(err){
-    return deferred.resolve();
-  })
 
-  return deferred.promise;
-}
 
 module.exports = execute;
