@@ -46,7 +46,7 @@ function execute( options ){
   .then( File.clearTMPFolder )  
   .then( downloadApp )
   .then( copyFolder )
-  .then( clearTMPFolder )
+  .then( File.clearTMPFolder )
   .then( adjustPackage )
   .then( adjustIndex )
   .then( File.clearTMPFolder )
@@ -84,22 +84,14 @@ function getApp(){
   return deferred.promise;
 }
 
-function clearTMPFolder(doNotCreate){
-  var deferred = Q.defer();
-  var path = Path.join( process.cwd(), 'tmp' );
-  rimraf(path, function(err){
-    if(doNotCreate) return deferred.resolve();
-    fs.mkdirSync(path);
-    return deferred.resolve();
-  })
-
-  return deferred.promise;
-}
 
 function downloadApp(){
 
   var deferred = Q.defer();
   var s3 = new Aws.S3();
+
+  var path = Path.join( process.cwd(), 'tmp' );
+  fs.mkdirSync(path);
 
   var writeStream = fs.createWriteStream( Path.join( process.cwd(), 'tmp',  promptOptions.promptValues.app_new_name + ".tar.gz"  ) , { flags : 'w' } );
 
