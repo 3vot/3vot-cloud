@@ -116,6 +116,9 @@ function buildPackage(){
   var deferred = Q.defer();
   Log.debug("Building App " + promptOptions.package.name, "actions/app_upload", 96)
 
+  var distFolderRule = '^'+ promptOptions.package.threevot.distFolder +'$'; 
+
+
   var appFolderReader = fstream.Reader(
     { path: './', 
       type: "Directory", 
@@ -123,7 +126,7 @@ function buildPackage(){
         return !this.basename.match(/^\./) &&
                !this.basename.match(/^node_modules$/) &&
                !this.basename.match(/^\.git/) &&
-               !this.basename.match(/^app$/) 
+               !this.basename.match(new RegExp(distFolderRule,'g')) 
 
       }
    });
