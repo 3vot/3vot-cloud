@@ -116,9 +116,11 @@ function getPackage(){
 
 function setDefaults(result){
   if(!result.threevot) result.threevot =  {};
+
   result.threevot.paths = result.threevot.paths || { "sourceBucket": "source.3vot.com", "productionBucket": "3vot.com" }
-  result.threevot.uploadSource = result.threevot.uploadSource || true;
-  result.threevot.build = result.threevot.build || true;
+  if(result.threevot.uploadSource ==null || result.threevot.uploadSource == undefined) result.threevot.uploadSource = true;
+  if(result.threevot.uploadApp ==null || result.threevot.uploadApp == undefined) result.threevot.uploadApp = true;
+  if(result.threevot.build ===null || result.threevot.build==undefined) result.threevot.build = true;
   result.threevot.distFolder = result.threevot.distFolder || "dist";  
   result.threevot.pathsToExclude =  result.threevot.pathsToExclude || ["node_modules"]
 
@@ -140,4 +142,3 @@ module.exports = {
   promptForUser: promptForUser,
   spawn: spawn
 }
-
