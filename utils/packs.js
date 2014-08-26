@@ -43,7 +43,7 @@ function promptForUser(object){
 
   prompt.start();
 
-  var description = "Profile:\n";
+  var description = "Profiles\n";
   var index = 1;
   var userArray = [];
   for(user in object.user.users){
@@ -51,6 +51,8 @@ function promptForUser(object){
     userArray.push( object.user.users[user] );
     index++;
   }
+
+  description+= "\nUse Profile: ";
 
   var prompts = [ 
     { name: 'user_name_index', description: description }
@@ -121,7 +123,7 @@ function setDefaults(result){
   if(result.threevot.uploadSource ==null || result.threevot.uploadSource == undefined) result.threevot.uploadSource = true;
   if(result.threevot.uploadApp ==null || result.threevot.uploadApp == undefined) result.threevot.uploadApp = true;
   if(result.threevot.build ===null || result.threevot.build==undefined) result.threevot.build = true;
-  result.threevot.distFolder = result.threevot.distFolder || "dist";  
+  if(result.threevot.distFolder ===null || result.threevot.distFolder==undefined) result.threevot.distFolder = "";  
   result.threevot.pathsToExclude =  result.threevot.pathsToExclude || ["node_modules"]
 
   delete result.threevot.user_name;
