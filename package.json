@@ -25,7 +25,8 @@
     "mkpath": "~0.1.0",
     "async": "^0.8.0",
     "tar-pack": "~2.0.0",
-    "keen.io": "~0.1.2"
+    "keen.io": "~0.1.2",
+    "archiver": "~0.11.0"
   },
   "testDependencies": {
     "mocha": "~1.17.0",
