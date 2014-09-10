@@ -117,7 +117,7 @@ function getPackage(){
 }
 
 function setDefaults(result){
-  if(!result.threevot) throw "threevot entry not found in package.json, this may not be a 3vot project."
+  if(!result.threevot) result.threevot = {};
 
   result.threevot.paths = result.threevot.paths || { "sourceBucket": "source.3vot.com", "productionBucket": "3vot.com" }
   if(result.threevot.uploadSource ==null || result.threevot.uploadSource == undefined) result.threevot.uploadSource = true;
