@@ -1,6 +1,6 @@
 {
   "name": "3vot-cloud",
-  "version": "0.0.62",
+  "version": "0.0.63",
   "description": "Cloud Components for 3VOT Command Line Tools",
   "main": "index.js",
   "scripts": {
