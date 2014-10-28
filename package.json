@@ -1,0 +1,45 @@
+{
+  "name": "3vot-cloud",
+  "version": "0.0.59",
+  "description": "Cloud Components for 3VOT Command Line Tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "colors": "~0.6.2",
+    "optimist": "~0.6.0",
+    "q": "~1.0.0",
+    "browserify": "~3.20.2",
+    "aws-sdk": "~2.0.0-rc8",
+    "semver": "~2.2.1",
+    "fstream": "~0.1.25",
+    "tar": "~0.1.19",
+    "mime": "~1.2.11",
+    "express": "~3.4.8",
+    "prompt": "~0.2.12",
+    "rimraf": "~2.2.6",
+    "eco": "~1.1.0-rc-3",
+    "superagent": "~0.16.0",
+    "3vot-model": "0.0.20",
+    "mkpath": "~0.1.0",
+    "async": "^0.8.0",
+    "tar-pack": "~2.0.0",
+    "keen.io": "~0.1.2",
+    "archiver": "~0.11.0",
+    "cheerio": "~0.17.0"
+  },
+  "testDependencies": {
+    "mocha": "~1.17.0",
+    "should": "~3.0.1",
+    "nock": "~0.27.2",
+    "sinon": "~1.9.0"
+  },
+  "author": {
+    "name": "Roberto Rodriguez"
+  },
+  "license": "MIT",
+  "readme": "ERROR: No README data found!",
+  "_id": "3vot-cloud@0.0.59",
+  "_from": "3vot-cloud@0.0.59"
+}
