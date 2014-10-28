@@ -11,19 +11,23 @@ var AwsHelpers = require("../aws/helpers");
 var zipPath
 
 var promptOptions = {
+
 	app_name: null,
 	session: null,
 	version: null
+
 }
 
 var tempVars = {}
 
 function execute(options, vars){
-	Log.debug("Uploading Static Assets", "actions/salesforce/staticUpload", 22)
+
+  Log.debug("Uploading Static Assets", "actions/salesforce/staticUpload", 22)
   var deferred = Q.defer();
   promptOptions = options;
   tempVars = vars || {};
-	tempVars.key = options.user.user_name + "/share/" + options.package.name  + ".zip"
+  tempVars.key = options.user.user_name + "/share/" + options.package.name  + ".zip"
+
   
   zipPath = Path.join(process.cwd(), "tmp", promptOptions.package.name + ".zip" )
 
@@ -39,30 +43,31 @@ function execute(options, vars){
 
 
 function packApp(){
-	var deffered = Q.defer();
-	
-	fs.mkdir( Path.dirname(zipPath), function(err){
-		var output = fs.createWriteStream(zipPath);
-		var archive = archiver('zip');
 
-		output.on('close', function() {
-			return deffered.resolve()
-		});
+  var deffered = Q.defer();
+  
+  fs.mkdir( Path.dirname(zipPath), function(err){
+    var output = fs.createWriteStream(zipPath);
+    var archive = archiver('zip');
 
-		archive.on('error', function(err) {
-		  return deffered.reject(err);
-		})
+    output.on('close', function() {
+      return deffered.resolve()
+    });
 
-		archive.pipe(output);
+    archive.on('error', function(err) {
+      return deffered.reject(err);
+    })
 
-		archive.bulk([
-		  { expand: true, cwd: "./", src: ['*/**',"*.*","!tmp/**", "!node_modules/**", "!"+ promptOptions.package.threevot.distFolder +"/**"  ] }
-		]);
+    archive.pipe(output);
 
-		archive.finalize();
-	});
+    archive.bulk([
+      { expand: true, cwd: "./", src: ['*/**',"*.*","!tmp/**", "!node_modules/**", "!"+ promptOptions.package.threevot.distFolder +"/**"  ] }
+    ]);
 
-	return deffered.promise;
+    archive.finalize();
+  });
+
+  return deffered.promise;
 }
 
 function upload(){
