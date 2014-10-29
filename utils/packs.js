@@ -125,7 +125,7 @@ function setDefaults(result){
   if(result.threevot.build ===null || result.threevot.build==undefined) result.threevot.build = true;
   if(result.threevot.distFolder ===null || result.threevot.distFolder==undefined) result.threevot.distFolder = "";  
   
-  if(result.threevot.api ===null || result.threevot.api==undefined) result.threevot.api = "https://free-12415f14c3a-124e539428a-12643e04653.force.com/api/services/apexrest/clay-api";  
+  if(result.threevot.api ===null || result.threevot.api==undefined) result.threevot.api = "https://free-12415f14c3a-124e539428a-12643e04653.secure.force.com/api/services/apexrest/clay-api";  
   
   
   result.threevot.pathsToExclude =  result.threevot.pathsToExclude || ["node_modules"]
