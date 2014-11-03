@@ -125,8 +125,11 @@ function setDefaults(result){
   if(result.threevot.build ===null || result.threevot.build==undefined) result.threevot.build = true;
   if(result.threevot.distFolder ===null || result.threevot.distFolder==undefined) result.threevot.distFolder = "";  
   
-  if(result.threevot.api ===null || result.threevot.api==undefined) result.threevot.api = "https://free-12415f14c3a-124e539428a-12643e04653.secure.force.com/api/services/apexrest/clay-api";  
-  
+  if(result.threevot.clay_api ===null || result.threevot.clay_api==undefined) result.threevot.api = "https://clay.secure.force.com/api/services/apexrest/clay-api";  
+  else result.threevot.api = result.threevot.clay_api;
+
+   Log.debug("Connecting to: " + result.threevot.clay_api, "utils/spawk",40)
+
   
   result.threevot.pathsToExclude =  result.threevot.pathsToExclude || ["node_modules"]
 
