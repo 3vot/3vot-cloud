@@ -44,6 +44,8 @@ function execute( options , externalTempVars ){
   return deferred.promise;
   }
 
+  if( tempVars.dist_path == tempVars.app_path ) tempVars.dist_path += "/dist"
+
   build3VOTJS();
 
   rimrafApp()
@@ -61,6 +63,7 @@ function execute( options , externalTempVars ){
 
 
 function rimrafApp(){
+
   var deferred = Q.defer();
   rimraf(tempVars.dist_path, function(err){
     if(err) return deferred.reject(err)
@@ -117,7 +120,7 @@ function bundleEntry(entryName, path){
     extensions: promptOptions.package.threevot.extensions
   });
 
-  _ref = promptOptions.package.threevot.transforms;
+  _ref = promptOptions.package.threevot.transforms || [];
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     transform = _ref[_i];   
     b.transform(transform);
