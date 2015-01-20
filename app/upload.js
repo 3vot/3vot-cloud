@@ -59,7 +59,7 @@ function execute(options){
 
     getAppVersion()
     .then( File.clearTMPFolder )
-    .then( adjustPackage )
+    //.then( adjustPackage )
     .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user.user_name, promptOptions.user.public_dev_key) })
     .then( function(){ return AppBuild( promptOptions, tempVars ) } )
     .then( buildPackage )
@@ -98,7 +98,7 @@ function getAppVersion(){
     }
   }
 
-  Request.get(promptOptions.package.threevot.api)
+  Request.get("https://clay.secure.force.com/api/services/apexrest/clay-api")
   .set('Accept', 'application/json')
   .type('application/json')
   .query("action=GET_VERSION")
@@ -226,7 +226,7 @@ function createApp(){
     }
   }
 
-  Request.post(promptOptions.package.threevot.api)
+  Request.post( "https://clay.secure.force.com/api/services/apexrest/clay-api" )
   .set('Accept', 'application/json')
   .type('application/json')
   .send({
