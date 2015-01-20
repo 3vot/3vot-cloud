@@ -93,8 +93,8 @@ function getAppVersion(){
       tempVars.app_version = res.body.version;
       return deferred.resolve( this ) 
     } else {
-      Log.debug( "App Name and Dev Code do not match - please check the app is assigned to you by emailing your devcode and app name one@3vot.com", "3vot-cloud/upload", 96 )
-      return deferred.reject( res.error || res.body )
+      Log.debug( res.error || res.body, "cloud - upload " , 96 );
+      return deferred.reject( "App Name and Dev Code do not match - please check the app is assigned to you by emailing your devcode and app name to one@3vot.com" )
     }
   }
 
