@@ -49,7 +49,7 @@ var tempVars = {
 function execute(options){
     var deferred = Q.defer();
 
-    if( !options.package.threevot.keys ) tempVars.keys = [options.user.user_name, options.package.name]
+    if( !options.package.threevot.keys ) tempVars.keys = [options.user.name, options.package.name]
     if( !options.promptValues.production ) options.promptValues.production = false
     if( options.promptValues.uploadApp == null ) options.promptValues.uploadApp = true
 
@@ -60,7 +60,7 @@ function execute(options){
     getAppVersion()
     .then( File.clearTMPFolder )
     //.then( adjustPackage )
-    .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user.user_name, promptOptions.user.public_dev_key) })
+    .then( function(){ return AwsCredentials.requestKeysFromProfile( promptOptions.user.name , promptOptions.user.public_dev_key) })
     .then( function(){ return AppBuild( promptOptions, tempVars ) } )
     .then( buildPackage )
     .then( uploadSourceCode  )
@@ -83,14 +83,12 @@ function getAppVersion(){
     if (res.ok && responseOk(res.body) ) {
       res.body = JSON.parse(res.body);
       if(!res.body.Version__c){
-        res.body = { version:  1, app_name: promptOptions.package.name, name: promptOptions.package.name };
+        res.body = { version:1, app_name: promptOptions.package.name, name: promptOptions.package.name };
       }
       else{ 
         res.body.version = res.body.Version__c + 1; 
         res.body.app_name = res.body.Name; 
       }
-      res.body.version = promptOptions.package.version
-
       tempVars.app = res.body;
       tempVars.app_version = res.body.version;
       return deferred.resolve( this ) 
