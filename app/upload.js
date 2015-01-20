@@ -65,7 +65,7 @@ function execute(options){
     .then( buildPackage )
     .then( uploadSourceCode  )
     .then( uploadAppFiles )
-    .then( createApp )
+    //.then( createApp )
     .then( File.clearTMPFolder )
     .then( function(){ 
       return deferred.resolve( tempVars.app ) ;
@@ -79,6 +79,7 @@ function getAppVersion(){
   var deferred = Q.defer();
   
   callbacks= function(res){
+
     if (res.ok && responseOk(res.body) ) {
       res.body = JSON.parse(res.body);
       if(!res.body.Version__c){
@@ -92,6 +93,7 @@ function getAppVersion(){
       tempVars.app_version = res.body.version;
       return deferred.resolve( this ) 
     } else {
+      Log.debug( "App Name and Dev Code do not match - please check the app is assigned to you by emailing your devcode and app name one@3vot.com", "3vot-cloud/upload", 96 )
       return deferred.reject( res.error || res.body )
     }
   }
