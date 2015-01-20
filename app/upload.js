@@ -83,12 +83,14 @@ function getAppVersion(){
     if (res.ok && responseOk(res.body) ) {
       res.body = JSON.parse(res.body);
       if(!res.body.Version__c){
-        res.body = { version:1, app_name: promptOptions.package.name, name: promptOptions.package.name };
+        res.body = { version:  1, app_name: promptOptions.package.name, name: promptOptions.package.name };
       }
       else{ 
         res.body.version = res.body.Version__c + 1; 
         res.body.app_name = res.body.Name; 
       }
+      res.body.version = promptOptions.package.version
+
       tempVars.app = res.body;
       tempVars.app_version = res.body.version;
       return deferred.resolve( this ) 
